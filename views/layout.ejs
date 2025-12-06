@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title + ' - ' : '' %>Art by Donna McAdams</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1 class="site-title">Art by Donna</h1>
+    </header>
+
+    <div class="main-content">
+      <aside class="sidebar">
+        <nav>
+          <ul>
+            <li><a href="/blogroll" class="<%= typeof page !== 'undefined' && page === 'blogroll' ? 'active' : '' %>">BlogRoll</a></li>
+            <li><a href="/gallery" class="<%= typeof page !== 'undefined' && page === 'gallery' ? 'active' : '' %>">Gallery</a></li>
+            <li><a href="/requests" class="<%= typeof page !== 'undefined' && page === 'requests' ? 'active' : '' %>">Requests</a></li>
+            <li><a href="/links" class="<%= typeof page !== 'undefined' && page === 'links' ? 'active' : '' %>">Links</a></li>
+            <li><a href="/contact" class="<%= typeof page !== 'undefined' && page === 'contact' ? 'active' : '' %>">Contact me</a></li>
+            <li><a href="/about" class="<%= typeof page !== 'undefined' && page === 'about' ? 'active' : '' %>">About</a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <main class="content-area">
+        <%- body %>
+      </main>
+    </div>
+
+    <footer>
+      <p>Copyright 2025 by Donna McAdams</p>
+    </footer>
+  </div>
+
+  <script src="/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "title": "Welcome to My Art Site",
+    "content": "This is my first post! I'm excited to share my artwork and thoughts with you.",
+    "date": "2025-01-15"
+  },
+  {
+    "id": 2,
+    "title": "New Series: Abstract Landscapes",
+    "content": "I've been working on a new series exploring abstract interpretations of natural landscapes. Using mixed media and bold colors to capture the essence of places I've visited.",
+    "date": "2025-01-20"
+  },
+  {
+    "id": 3,
+    "title": "Studio Update",
+    "content": "Just finished setting up my new studio space. The natural lighting is perfect for working on larger pieces. Can't wait to see what emerges from this creative environment.",
+    "date": "2025-02-01"
+  }
+]

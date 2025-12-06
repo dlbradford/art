@@ -1,0 +1,118 @@
+<%- include('layout', { 
+  title: 'Requests',
+  page: 'requests',
+  body: `
+    <h2 style="font-size: 28px; margin-bottom: 30px; font-weight: 600;">Commission Requests</h2>
+    
+    <div style="margin-bottom: 40px; line-height: 1.7;">
+      <p style="margin-bottom: 20px;">I'm currently accepting commission requests for custom artwork. Whether you're looking for a unique piece for your home, a gift for someone special, or corporate art, I'd love to work with you to create something meaningful.</p>
+      
+      <h3 style="font-size: 20px; margin: 30px 0 16px; font-weight: 600;">What I Offer</h3>
+      <ul style="margin-left: 30px; margin-bottom: 30px; line-height: 1.8;">
+        <li style="margin-bottom: 8px;">Custom paintings (acrylic, oil, mixed media)</li>
+        <li style="margin-bottom: 8px;">Digital artwork and illustrations</li>
+        <li style="margin-bottom: 8px;">Portrait commissions</li>
+        <li style="margin-bottom: 8px;">Abstract and landscape pieces</li>
+      </ul>
+
+      <h3 style="font-size: 20px; margin: 30px 0 16px; font-weight: 600;">Process</h3>
+      <ol style="margin-left: 30px; margin-bottom: 30px; line-height: 1.8;">
+        <li style="margin-bottom: 8px;">Submit your request using the form below (include reference images if you have them)</li>
+        <li style="margin-bottom: 8px;">I'll review your request and get back to you within 3-5 business days</li>
+        <li style="margin-bottom: 8px;">We'll discuss details, timeline, and pricing</li>
+        <li style="margin-bottom: 8px;">Once agreed, I'll create your custom piece</li>
+        <li style="margin-bottom: 8px;">You'll receive regular updates and a preview before completion</li>
+      </ol>
+    </div>
+
+    <div class="admin-controls">
+      <h3>Submit a Commission Request</h3>
+      <form id="requestForm" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="requestName">Your Name *</label>
+          <input type="text" id="requestName" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="requestEmail">Email Address *</label>
+          <input type="email" id="requestEmail" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="requestType">Type of Artwork *</label>
+          <select id="requestType" name="type" required>
+            <option value="">Select...</option>
+            <option value="painting">Painting</option>
+            <option value="digital">Digital Art</option>
+            <option value="portrait">Portrait</option>
+            <option value="abstract">Abstract</option>
+            <option value="landscape">Landscape</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="requestSize">Desired Size</label>
+          <input type="text" id="requestSize" name="size" placeholder="e.g., 24x36 inches">
+        </div>
+        <div class="form-group">
+          <label for="requestBudget">Budget Range</label>
+          <input type="text" id="requestBudget" name="budget" placeholder="e.g., $500-$1000">
+        </div>
+        <div class="form-group">
+          <label for="requestDescription">Description of What You'd Like *</label>
+          <textarea id="requestDescription" name="description" required placeholder="Please describe your vision, including colors, themes, style preferences, and any specific elements you'd like included..."></textarea>
+        </div>
+        <div class="form-group">
+          <label for="requestTimeline">Ideal Timeline</label>
+          <input type="text" id="requestTimeline" name="timeline" placeholder="e.g., 2 months, flexible, by June 2025">
+        </div>
+        <div class="form-group">
+          <label for="requestImages">Reference Images (optional, up to 5 images)</label>
+          <div class="file-upload-area">
+            <input type="file" id="requestImages" name="images" accept="image/*" multiple style="margin-bottom: 8px;">
+            <p style="font-size: 13px; color: var(--secondary-text); margin-top: 8px;">Upload inspiration images, sketches, or examples of what you're looking for</p>
+          </div>
+        </div>
+        <button type="submit">Submit Request</button>
+      </form>
+    </div>
+
+    <div id="requestMessage" style="display: none; margin-top: 20px; padding: 16px; border-radius: 6px; border: 1px solid #d1e7dd; background: #d1e7dd; color: #0f5132; text-align: center;"></div>
+
+    ${requests && requests.length > 0 ? `
+      <div style="margin-top: 60px;">
+        <h3 style="font-size: 24px; margin-bottom: 24px; font-weight: 600;">Submitted Requests</h3>
+        ${requests.map(request => `
+          <div class="request-item">
+            <div class="request-header">
+              <div>
+                <h4 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">${request.name}</h4>
+                <p style="font-size: 14px; color: var(--secondary-text);">${request.email} • ${new Date(request.submitted_at).toLocaleDateString()}</p>
+              </div>
+              <span class="request-status ${request.status}">${request.status}</span>
+            </div>
+            <div style="margin-bottom: 12px;">
+              <strong style="font-size: 14px; color: var(--secondary-text);">Type:</strong> ${request.type}<br>
+              ${request.size ? `<strong style="font-size: 14px; color: var(--secondary-text);">Size:</strong> ${request.size}<br>` : ''}
+              ${request.budget ? `<strong style="font-size: 14px; color: var(--secondary-text);">Budget:</strong> ${request.budget}<br>` : ''}
+              ${request.timeline ? `<strong style="font-size: 14px; color: var(--secondary-text);">Timeline:</strong> ${request.timeline}` : ''}
+            </div>
+            <div style="margin-bottom: 12px;">
+              <strong style="font-size: 14px; color: var(--secondary-text); display: block; margin-bottom: 8px;">Description:</strong>
+              <p style="line-height: 1.6;">${request.description}</p>
+            </div>
+            ${request.images && request.images.length > 0 ? `
+              <div>
+                <strong style="font-size: 14px; color: var(--secondary-text); display: block; margin-bottom: 8px;">Reference Images:</strong>
+                <div class="request-images">
+                  ${request.images.map(img => `<img src="/uploads/${img}" alt="Reference">`).join('')}
+                </div>
+              </div>
+            ` : ''}
+            <div style="margin-top: 16px; text-align: right;">
+              <button onclick="deleteRequest(${request.id})" style="background: var(--danger-color); padding: 8px 16px; font-size: 14px;">Delete</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    ` : ''}
+  `
+}) %>

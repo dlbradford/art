@@ -1,0 +1,42 @@
+<%- include('layout', { 
+  title: 'Gallery',
+  page: 'gallery',
+  body: `
+    <h2 style="font-size: 26px; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 2px solid #2a2a2a;">Art Gallery</h2>
+    
+    <div class="admin-controls">
+      <h3>Upload New Image</h3>
+      <form id="uploadImageForm" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="imageTitle">Title</label>
+          <input type="text" id="imageTitle" name="title" required>
+        </div>
+        <div class="form-group">
+          <label for="imageDescription">Description</label>
+          <input type="text" id="imageDescription" name="description">
+        </div>
+        <div class="form-group">
+          <label for="imageFile">Image File</label>
+          <input type="file" id="imageFile" name="image" accept="image/*" required style="padding: 8px;">
+        </div>
+        <button type="submit">Upload Image</button>
+      </form>
+    </div>
+
+    <div class="gallery-grid" id="galleryContainer">
+      ${images && images.length > 0 ? 
+        images.map(image => `
+          <div class="gallery-item" data-id="${image.id}">
+            <img src="/uploads/${image.filename}" alt="${image.title}">
+            <div class="gallery-info">
+              <div class="gallery-title">${image.title}</div>
+              ${image.description ? `<div class="gallery-description">${image.description}</div>` : ''}
+              <button onclick="deleteImage(${image.id})" style="margin-top: 10px; background: #d44; border-color: #a33; font-size: 12px; padding: 8px 16px;">Delete</button>
+            </div>
+          </div>
+        `).join('') :
+        '<p style="grid-column: 1/-1; text-align: center; color: #4a4a4a; padding: 40px;">No images yet. Upload your first artwork above!</p>'
+      }
+    </div>
+  `
+}) %>
