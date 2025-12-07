@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Blog Management</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="admin-bar">
+    <span>✏️ Blog Management</span>
+    <div>
+      <a href="/admin/dashboard">Dashboard</a>
+      <a href="/">View Site</a>
+      <a href="/admin/logout">Logout</a>
+    </div>
+  </div>
+  <div class="container" style="padding: 40px;">
+    <h1 style="margin-bottom: 30px;">Manage Blog Posts</h1>
+    
+    <div class="admin-controls">
+      <h3>Add New Post</h3>
+      <form id="addPostForm" enctype="multipart/form-data">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="postTitle" required>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="postDate" required>
+        </div>
+        <div class="form-group">
+          <label>Content</label>
+          <textarea id="postContent" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Image (Optional)</label>
+          <input type="file" id="postImage" accept="image/*">
+          <p style="font-size: 13px; color: var(--secondary-text); margin-top: 8px;">Add an image to your blog post</p>
+        </div>
+        <div class="form-group" id="imagePositionGroup" style="display: none;">
+          <label>Image Position</label>
+          <div style="display: flex; gap: 20px; align-items: center;">
+            <label style="display: flex; align-items: center; font-weight: normal;">
+              <input type="radio" name="imagePosition" value="above" checked style="width: auto; margin-right: 8px;">
+              Above text
+            </label>
+            <label style="display: flex; align-items: center; font-weight: normal;">
+              <input type="radio" name="imagePosition" value="below" style="width: auto; margin-right: 8px;">
+              Below text
+            </label>
+          </div>
+        </div>
+        <button type="submit">Publish Post</button>
+      </form>
+    </div>
+
+    <h2 style="margin: 40px 0 20px;">All Posts</h2>
+    <% posts.forEach(post => { %>
+      <div class="post">
+        <div class="post-header">
+          <h3 class="post-title"><%= post.title %></h3>
+          <span class="post-date"><%= post.date %></span>
+        </div>
+        <% if (post.image && post.imagePosition === 'above') { %>
+          <div style="margin-bottom: 20px;">
+            <img src="/uploads/<%= post.image %>" alt="<%= post.title %>" style="max-width: 100%; height: auto; border-radius: 6px;">
+          </div>
+        <% } %>
+        <div class="post-content"><%= post.content %></div>
+        <% if (post.image && post.imagePosition === 'below') { %>
+          <div style="margin-top: 20px;">
+            <img src="/uploads/<%= post.image %>" alt="<%= post.title %>" style="max-width: 100%; height: auto; border-radius: 6px;">
+          </div>
+        <% } %>
+        <div style="margin-top: 20px; text-align: right;">
+          <button onclick="deletePost(<%= post.id %>)" class="btn-danger">Delete</button>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+  <script src="/script.js"></script>
+</body>
+</html>

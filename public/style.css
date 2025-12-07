@@ -32,11 +32,10 @@ body {
   padding: 0;
 }
 
-/* Header Styles */
+/* Header Styles - NO SHADOW per requirement #5 */
 header {
-  background: var(--primary-bg);
+  background: var(--secondary-bg);
   border-bottom: 1px solid var(--border-color);
-  box-shadow: var(--shadow);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -51,48 +50,25 @@ header {
   color: var(--primary-text);
 }
 
-/* Navigation */
-nav {
-  background: white;
-  border-bottom: 3px solid var(--border-color);
-  padding: 0;
-}
-
-nav ul {
-  list-style: none;
+/* Admin Bar */
+.admin-bar {
+  background: #343a40;
+  color: white;
+  padding: 8px 20px;
   display: flex;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
 }
 
-nav li {
-  flex: 1;
-  min-width: 150px;
-}
-
-nav a {
-  display: block;
-  padding: 16px 24px;
+.admin-bar a {
+  color: white;
   text-decoration: none;
-  color: var(--primary-text);
-  font-size: 16px;
-  font-weight: bold;
-  border-right: 2px solid var(--border-color);
-  transition: all 0.2s ease;
-  text-align: center;
+  margin-left: 15px;
 }
 
-nav li:last-child a {
-  border-right: none;
-}
-
-nav a:hover {
-  background: var(--hover-bg);
-  transform: translateY(-2px);
-}
-
-nav a.active {
-  background: var(--primary-text);
-  color: var(--primary-bg);
+.admin-bar a:hover {
+  text-decoration: underline;
 }
 
 /* Main Content Layout */
@@ -307,6 +283,68 @@ nav a.active {
   margin-bottom: 12px;
 }
 
+/* Lightbox */
+.lightbox {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+
+.lightbox.active {
+  display: flex;
+}
+
+.lightbox-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.lightbox-content img {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 40px;
+  color: white;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.5);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.lightbox-close:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.lightbox-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
 /* Forms */
 .form-group {
   margin-bottom: 20px;
@@ -324,7 +362,9 @@ input[type="text"],
 input[type="email"],
 input[type="url"],
 input[type="date"],
+input[type="password"],
 input[type="file"],
+input[type="color"],
 textarea,
 select {
   width: 100%;
@@ -337,10 +377,17 @@ select {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+input[type="color"] {
+  height: 50px;
+  padding: 5px;
+  cursor: pointer;
+}
+
 input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="url"]:focus,
 input[type="date"]:focus,
+input[type="password"]:focus,
 textarea:focus,
 select:focus {
   outline: none;
@@ -379,6 +426,30 @@ button:hover,
   background: var(--accent-hover);
   transform: translateY(-1px);
   box-shadow: var(--shadow);
+}
+
+button.btn-danger {
+  background: var(--danger-color);
+}
+
+button.btn-danger:hover {
+  background: #bb2d3b;
+}
+
+button.btn-success {
+  background: var(--success-color);
+}
+
+button.btn-success:hover {
+  background: #157347;
+}
+
+button.btn-secondary {
+  background: var(--secondary-text);
+}
+
+button.btn-secondary:hover {
+  background: #5c636a;
 }
 
 /* Links Page */
@@ -446,6 +517,36 @@ footer {
   color: var(--primary-text);
 }
 
+/* Admin Dashboard */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+.stat-card h3 {
+  font-size: 14px;
+  color: var(--secondary-text);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-card .stat-value {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--accent-color);
+}
+
 /* Request Items */
 .request-item {
   background: white;
@@ -474,12 +575,12 @@ footer {
   text-transform: uppercase;
 }
 
-.request-status.pending {
+.request-status.incomplete {
   background: #fff3cd;
   color: #856404;
 }
 
-.request-status.completed {
+.request-status.complete {
   background: #d1e7dd;
   color: #0f5132;
 }
@@ -511,6 +612,45 @@ footer {
 .file-upload-area:hover {
   border-color: var(--accent-color);
   background: white;
+}
+
+/* Search and Filter */
+.search-filter {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.search-filter input,
+.search-filter select {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Login Page */
+.login-container {
+  max-width: 400px;
+  margin: 100px auto;
+  padding: 40px;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: var(--shadow-lg);
+}
+
+.login-container h2 {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.error-message {
+  background: #f8d7da;
+  color: #842029;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border: 1px solid #f5c2c7;
 }
 
 /* Responsive Design */
@@ -573,6 +713,19 @@ footer {
   .request-images {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .search-filter {
+    flex-direction: column;
+  }
+
+  .search-filter input,
+  .search-filter select {
+    width: 100%;
+  }
 }
 
 /* Animations */
@@ -589,7 +742,8 @@ footer {
 
 .post,
 .gallery-item,
-.links-list li {
+.links-list li,
+.request-item {
   animation: fadeIn 0.5s ease-out;
 }
 

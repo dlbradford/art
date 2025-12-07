@@ -6,32 +6,48 @@
   <title><%= typeof title !== 'undefined' ? title + ' - ' : '' %>Art by Donna McAdams</title>
   <link rel="stylesheet" href="/style.css">
 </head>
-<body>
+<body 
+  data-bg-color="<%= settings.backgroundColor %>"
+  data-header-bg="<%= settings.headerBackground %>"
+  data-post-bg="<%= settings.postBackground %>"
+  data-text-color="<%= settings.textColor %>">
+  
+  <% if (isAdmin) { %>
+  <div class="admin-bar">
+    <span>✏️ Admin Mode</span>
+    <div>
+      <a href="/admin/dashboard">Dashboard</a>
+      <a href="/">View Site</a>
+      <a href="/admin/logout">Logout</a>
+    </div>
+  </div>
+  <% } %>
+
   <div class="container">
-    <header>
-      <h1 class="site-title">Art by Donna</h1>
+    <header style="background: <%= settings.headerBackground %>;">
+      <h1 class="site-title" style="color: <%= settings.textColor %>;">Art by Donna</h1>
     </header>
 
     <div class="main-content">
-      <aside class="sidebar">
+      <aside class="sidebar" style="background: <%= settings.headerBackground %>;">
         <nav>
           <ul>
-            <li><a href="/blogroll" class="<%= typeof page !== 'undefined' && page === 'blogroll' ? 'active' : '' %>">BlogRoll</a></li>
-            <li><a href="/gallery" class="<%= typeof page !== 'undefined' && page === 'gallery' ? 'active' : '' %>">Gallery</a></li>
-            <li><a href="/requests" class="<%= typeof page !== 'undefined' && page === 'requests' ? 'active' : '' %>">Requests</a></li>
-            <li><a href="/links" class="<%= typeof page !== 'undefined' && page === 'links' ? 'active' : '' %>">Links</a></li>
-            <li><a href="/contact" class="<%= typeof page !== 'undefined' && page === 'contact' ? 'active' : '' %>">Contact me</a></li>
-            <li><a href="/about" class="<%= typeof page !== 'undefined' && page === 'about' ? 'active' : '' %>">About</a></li>
+            <li><a href="/blogroll" class="<%= typeof page !== 'undefined' && page === 'blogroll' ? 'active' : '' %>" style="color: <%= settings.textColor %>;">BlogRoll</a></li>
+            <li><a href="/gallery" class="<%= typeof page !== 'undefined' && page === 'gallery' ? 'active' : '' %>" style="color: <%= settings.textColor %>;">Gallery</a></li>
+            <li><a href="/requests" class="<%= typeof page !== 'undefined' && page === 'requests' ? 'active' : '' %>" style="color: <%= settings.textColor %>;">Requests</a></li>
+            <li><a href="/links" class="<%= typeof page !== 'undefined' && page === 'links' ? 'active' : '' %>" style="color: <%= settings.textColor %>;">Links</a></li>
+            <li><a href="/contact" class="<%= typeof page !== 'undefined' && page === 'contact' ? 'active' : '' %>" style="color: <%= settings.textColor %>;">Contact me</a></li>
+            <li><a href="/about" class="<%= typeof page !== 'undefined' && page === 'about' ? 'active' : '' %>" style="color: <%= settings.textColor %>;">About</a></li>
           </ul>
         </nav>
       </aside>
 
-      <main class="content-area">
+      <main class="content-area" style="background: <%= settings.backgroundColor %>; color: <%= settings.textColor %>;">
         <%- body %>
       </main>
     </div>
 
-    <footer>
+    <footer style="background: <%= settings.headerBackground %>; color: <%= settings.textColor %>;">
       <p>Copyright 2025 by Donna McAdams</p>
     </footer>
   </div>

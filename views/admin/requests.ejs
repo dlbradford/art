@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Request Management</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="admin-bar">
+    <span>✏️ Request Management</span>
+    <div>
+      <a href="/admin/dashboard">Dashboard</a>
+      <a href="/">View Site</a>
+      <a href="/admin/logout">Logout</a>
+    </div>
+  </div>
+  <div class="container" style="padding: 40px;">
+    <h1 style="margin-bottom: 30px;">Manage Commission Requests</h1>
+    
+    <!-- Search and Filter -->
+    <div class="search-filter">
+      <input type="text" id="searchRequests" placeholder="Search by name or email..." onkeyup="filterRequests()">
+      <select id="filterStatus" onchange="filterRequests()">
+        <option value="all">All Statuses</option>
+        <option value="incomplete">Incomplete</option>
+        <option value="complete">Complete</option>
+      </select>
+      <select id="filterType" onchange="filterRequests()">
+        <option value="all">All Types</option>
+        <option value="painting">Painting</option>
+        <option value="digital">Digital Art</option>
+        <option value="portrait">Portrait</option>
+        <option value="abstract">Abstract</option>
+        <option value="landscape">Landscape</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+
+    <% requests.forEach(request => { %>
+      <div class="request-item" 
+           data-name="<%= request.name %>"
+           data-email="<%= request.email %>"
+           data-status="<%= request.status %>"
+           data-type="<%= request.type %>">
+        <div class="request-header">
+          <div>
+            <h3><%= request.name %></h3>
+            <p style="color: var(--secondary-text);"><%= request.email %> • <%= new Date(request.submitted_at).toLocaleDateString() %></p>
+          </div>
+          <span class="request-status <%= request.status %>"><%= request.status %></span>
+        </div>
+        <div style="margin-bottom: 12px;">
+          <strong>Type:</strong> <%= request.type %><br>
+          <% if (request.size) { %><strong>Size:</strong> <%= request.size %><br><% } %>
+          <% if (request.budget) { %><strong>Budget:</strong> <%= request.budget %><br><% } %>
+          <% if (request.timeline) { %><strong>Timeline:</strong> <%= request.timeline %><% } %>
+        </div>
+        <div style="margin-bottom: 12px;">
+          <strong>Description:</strong>
+          <p><%= request.description %></p>
+        </div>
+        <% if (request.images && request.images.length > 0) { %>
+          <div>
+            <strong>Reference Images:</strong>
+            <div class="request-images">
+              <% request.images.forEach(img => { %>
+                <img src="/uploads/<%= img %>" alt="Reference">
+              <% }); %>
+            </div>
+          </div>
+        <% } %>
+        <div style="margin-top: 16px; display: flex; gap: 10px;">
+          <% if (request.status === 'incomplete') { %>
+            <button onclick="updateRequestStatus(<%= request.id %>, 'complete')" class="btn-success">Mark Complete</button>
+          <% } else { %>
+            <button onclick="updateRequestStatus(<%= request.id %>, 'incomplete')" class="btn-secondary">Mark Incomplete</button>
+          <% } %>
+          <button onclick="deleteRequest(<%= request.id %>)" class="btn-danger">Delete</button>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+  <script src="/script.js"></script>
+</body>
+</html>

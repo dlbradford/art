@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Links Management</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="admin-bar">
+    <span>✏️ Links Management</span>
+    <div>
+      <a href="/admin/dashboard">Dashboard</a>
+      <a href="/">View Site</a>
+      <a href="/admin/logout">Logout</a>
+    </div>
+  </div>
+  <div class="container" style="padding: 40px;">
+    <h1 style="margin-bottom: 30px;">Manage Links</h1>
+    
+    <div class="admin-controls">
+      <h3>Add New Link</h3>
+      <form id="addLinkForm">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="linkTitle" required>
+        </div>
+        <div class="form-group">
+          <label>URL</label>
+          <input type="url" id="linkUrl" required placeholder="https://example.com">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" id="linkDescription">
+        </div>
+        <button type="submit">Add Link</button>
+      </form>
+    </div>
+
+    <h2 style="margin: 40px 0 20px;">All Links</h2>
+    <ul class="links-list">
+      <% links.forEach(link => { %>
+        <li>
+          <a href="<%= link.url %>" target="_blank"><%= link.title %></a>
+          <% if (link.description) { %>
+            <div class="link-description"><%= link.description %></div>
+          <% } %>
+          <button onclick="deleteLink(<%= link.id %>)" class="btn-danger" style="margin-top: 10px; font-size: 14px;">Delete</button>
+        </li>
+      <% }); %>
+    </ul>
+  </div>
+  <script src="/script.js"></script>
+</body>
+</html>

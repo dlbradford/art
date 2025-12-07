@@ -2,45 +2,31 @@
   title: 'Blog',
   page: 'blogroll',
   body: `
-    <h2 style="font-size: 26px; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 2px solid #2a2a2a;">Blog Posts</h2>
+    <h2 style="font-size: 28px; margin-bottom: 30px; font-weight: 600;">Blog Posts</h2>
     
-    <div class="admin-controls">
-      <h3>Add New Post</h3>
-      <form id="addPostForm">
-        <div class="form-group">
-          <label for="postTitle">Title</label>
-          <input type="text" id="postTitle" name="title" required>
-        </div>
-        <div class="form-group">
-          <label for="postDate">Date</label>
-          <input type="date" id="postDate" name="date" required>
-        </div>
-        <div class="form-group">
-          <label for="postContent">Content</label>
-          <textarea id="postContent" name="content" required></textarea>
-        </div>
-        <button type="submit">Publish Post</button>
-      </form>
-    </div>
-
-    <div id="postsContainer">
-      ${posts && posts.length > 0 ? 
-        posts.map(post => `
-          <article class="post" data-id="${post.id}">
-            <div class="post-header">
-              <h3 class="post-title">${post.title}</h3>
-              <span class="post-date">${post.date}</span>
+    ${posts && posts.length > 0 ? 
+      posts.map(post => `
+        <article class="post" style="background: ${settings.postBackground}; color: ${settings.textColor};">
+          <div class="post-header">
+            <h3 class="post-title" style="color: ${settings.textColor};">${post.title}</h3>
+            <span class="post-date">${post.date}</span>
+          </div>
+          ${post.image && post.imagePosition === 'above' ? `
+            <div style="margin-bottom: 20px;">
+              <img src="/uploads/${post.image}" alt="${post.title}" style="max-width: 100%; height: auto; border-radius: 6px; box-shadow: var(--shadow);">
             </div>
-            <div class="post-content">
-              ${post.content}
+          ` : ''}
+          <div class="post-content">
+            ${post.content}
+          </div>
+          ${post.image && post.imagePosition === 'below' ? `
+            <div style="margin-top: 20px;">
+              <img src="/uploads/${post.image}" alt="${post.title}" style="max-width: 100%; height: auto; border-radius: 6px; box-shadow: var(--shadow);">
             </div>
-            <div style="margin-top: 20px; text-align: right;">
-              <button onclick="deletePost(${post.id})" style="background: #d44; border-color: #a33;">Delete</button>
-            </div>
-          </article>
-        `).join('') :
-        '<p style="text-align: center; color: #4a4a4a; padding: 40px;">No posts yet. Add your first post above!</p>'
-      }
-    </div>
+          ` : ''}
+        </article>
+      `).join('') :
+      '<p style="text-align: center; padding: 40px;">No posts yet. Check back soon!</p>'
+    }
   `
 }) %>

@@ -21,7 +21,7 @@ function updateCarousel() {
     const slide = slides[currentSlide];
     carouselContent.innerHTML = `
       <h2 style="font-size: 28px; margin-bottom: 15px;">${slide.title}</h2>
-      <p style="font-size: 16px; color: #4a4a4a;">${slide.description}</p>
+      <p style="font-size: 16px;">${slide.description}</p>
     `;
   }
 }
@@ -39,23 +39,72 @@ function prevSlide() {
 // Auto-advance carousel
 setInterval(nextSlide, 5000);
 
-// Blog post form submission
+// Lightbox functionality
+function openLightbox(imageSrc, title, description) {
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  const lightboxTitle = document.getElementById('lightbox-title');
+  const lightboxDesc = document.getElementById('lightbox-desc');
+  
+  if (lightbox && lightboxImg) {
+    lightboxImg.src = imageSrc;
+    if (lightboxTitle) lightboxTitle.textContent = title || '';
+    if (lightboxDesc) lightboxDesc.textContent = description || '';
+    lightbox.classList.add('active');
+  }
+}
+
+function closeLightbox() {
+  const lightbox = document.getElementById('lightbox');
+  if (lightbox) {
+    lightbox.classList.remove('active');
+  }
+}
+
+// Close lightbox on escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeLightbox();
+  }
+});
+
+// Blog post form submission (Admin only)
 const addPostForm = document.getElementById('addPostForm');
 if (addPostForm) {
+  // Show/hide image position options when file is selected
+  const postImageInput = document.getElementById('postImage');
+  const imagePositionGroup = document.getElementById('imagePositionGroup');
+  
+  if (postImageInput && imagePositionGroup) {
+    postImageInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        imagePositionGroup.style.display = 'block';
+      } else {
+        imagePositionGroup.style.display = 'none';
+      }
+    });
+  }
+
   addPostForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const formData = {
-      title: document.getElementById('postTitle').value,
-      content: document.getElementById('postContent').value,
-      date: document.getElementById('postDate').value
-    };
+    const formData = new FormData();
+    formData.append('title', document.getElementById('postTitle').value);
+    formData.append('content', document.getElementById('postContent').value);
+    formData.append('date', document.getElementById('postDate').value);
+    
+    // Add image if selected
+    const imageFile = document.getElementById('postImage').files[0];
+    if (imageFile) {
+      formData.append('image', imageFile);
+      const imagePosition = document.querySelector('input[name="imagePosition"]:checked').value;
+      formData.append('imagePosition', imagePosition);
+    }
 
     try {
       const response = await fetch('/api/posts', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: formData
       });
 
       if (response.ok) {
@@ -70,7 +119,7 @@ if (addPostForm) {
   });
 }
 
-// Delete post
+// Delete post (Admin only)
 async function deletePost(id) {
   if (!confirm('Are you sure you want to delete this post?')) return;
 
@@ -90,7 +139,7 @@ async function deletePost(id) {
   }
 }
 
-// Gallery image upload
+// Gallery image upload (Admin only)
 const uploadImageForm = document.getElementById('uploadImageForm');
 if (uploadImageForm) {
   uploadImageForm.addEventListener('submit', async (e) => {
@@ -119,7 +168,7 @@ if (uploadImageForm) {
   });
 }
 
-// Delete gallery image
+// Delete gallery image (Admin only)
 async function deleteImage(id) {
   if (!confirm('Are you sure you want to delete this image?')) return;
 
@@ -139,7 +188,7 @@ async function deleteImage(id) {
   }
 }
 
-// Add link
+// Add link (Admin only)
 const addLinkForm = document.getElementById('addLinkForm');
 if (addLinkForm) {
   addLinkForm.addEventListener('submit', async (e) => {
@@ -170,21 +219,34 @@ if (addLinkForm) {
   });
 }
 
+// Delete link (Admin only)
+async function deleteLink(id) {
+  if (!confirm('Are you sure you want to delete this link?')) return;
+
+  try {
+    const response = await fetch(`/api/links/${id}`, {
+      method: 'DELETE'
+    });
+
+    if (response.ok) {
+      alert('Link deleted successfully!');
+      window.location.reload();
+    } else {
+      alert('Error deleting link');
+    }
+  } catch (error) {
+    alert('Error: ' + error.message);
+  }
+}
+
 // Contact form
 const contactForm = document.getElementById('contactForm');
 if (contactForm) {
   contactForm.addEventListener('submit', (e) => {
     e.preventDefault();
     
-    const messageDiv = document.getElementById('contactMessage');
-    messageDiv.style.display = 'block';
-    messageDiv.innerHTML = 'Thank you for your message! I will get back to you within 2-3 business days.';
-    
+    alert('Thank you for your message! I will get back to you within 2-3 business days.');
     contactForm.reset();
-    
-    setTimeout(() => {
-      messageDiv.style.display = 'none';
-    }, 5000);
   });
 }
 
@@ -216,15 +278,11 @@ if (requestForm) {
       });
 
       if (response.ok) {
-        const messageDiv = document.getElementById('requestMessage');
-        messageDiv.style.display = 'block';
-        messageDiv.innerHTML = 'Your commission request has been submitted! I will review it and get back to you within 3-5 business days.';
-        
+        alert('Your commission request has been submitted! I will review it and get back to you within 3-5 business days.');
         requestForm.reset();
-        
         setTimeout(() => {
-          window.location.reload();
-        }, 2000);
+          window.location.href = '/';
+        }, 1000);
       } else {
         alert('Error submitting request');
       }
@@ -234,7 +292,27 @@ if (requestForm) {
   });
 }
 
-// Delete request
+// Update request status (Admin only)
+async function updateRequestStatus(id, status) {
+  try {
+    const response = await fetch(`/api/requests/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    });
+
+    if (response.ok) {
+      alert('Request status updated!');
+      window.location.reload();
+    } else {
+      alert('Error updating status');
+    }
+  } catch (error) {
+    alert('Error: ' + error.message);
+  }
+}
+
+// Delete request (Admin only)
 async function deleteRequest(id) {
   if (!confirm('Are you sure you want to delete this request?')) return;
 
@@ -254,26 +332,62 @@ async function deleteRequest(id) {
   }
 }
 
-// Gallery image modal (optional enhancement)
-document.addEventListener('DOMContentLoaded', () => {
-  const galleryItems = document.querySelectorAll('.gallery-item img');
-  
-  galleryItems.forEach(img => {
-    img.addEventListener('click', (e) => {
-      // Simple enlargement effect on click
-      if (img.style.transform === 'scale(1.5)') {
-        img.style.transform = 'scale(1)';
-        img.style.position = 'relative';
-        img.style.zIndex = '1';
+// Settings form (Admin only)
+const settingsForm = document.getElementById('settingsForm');
+if (settingsForm) {
+  settingsForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = {
+      backgroundColor: document.getElementById('backgroundColor').value,
+      postBackground: document.getElementById('postBackground').value,
+      textColor: document.getElementById('textColor').value
+    };
+
+    try {
+      const response = await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        alert('Settings saved! Refresh to see changes.');
+        window.location.reload();
       } else {
-        img.style.transform = 'scale(1.5)';
-        img.style.position = 'relative';
-        img.style.zIndex = '1000';
-        img.style.transition = 'transform 0.3s ease';
+        alert('Error saving settings');
       }
-    });
+    } catch (error) {
+      alert('Error: ' + error.message);
+    }
   });
-});
+}
+
+// Request search and filter (Admin only)
+function filterRequests() {
+  const searchTerm = document.getElementById('searchRequests')?.value.toLowerCase() || '';
+  const statusFilter = document.getElementById('filterStatus')?.value || 'all';
+  const typeFilter = document.getElementById('filterType')?.value || 'all';
+  
+  const requests = document.querySelectorAll('.request-item');
+  
+  requests.forEach(request => {
+    const name = request.getAttribute('data-name')?.toLowerCase() || '';
+    const email = request.getAttribute('data-email')?.toLowerCase() || '';
+    const status = request.getAttribute('data-status') || '';
+    const type = request.getAttribute('data-type') || '';
+    
+    const matchesSearch = name.includes(searchTerm) || email.includes(searchTerm);
+    const matchesStatus = statusFilter === 'all' || status === statusFilter;
+    const matchesType = typeFilter === 'all' || type === typeFilter;
+    
+    if (matchesSearch && matchesStatus && matchesType) {
+      request.style.display = 'block';
+    } else {
+      request.style.display = 'none';
+    }
+  });
+}
 
 // Set current date as default for blog post date
 const postDateInput = document.getElementById('postDate');
@@ -281,3 +395,28 @@ if (postDateInput && !postDateInput.value) {
   const today = new Date().toISOString().split('T')[0];
   postDateInput.value = today;
 }
+
+// Apply custom colors from settings
+document.addEventListener('DOMContentLoaded', () => {
+  const body = document.body;
+  const bg = body.getAttribute('data-bg-color');
+  const headerBg = body.getAttribute('data-header-bg');
+  const postBg = body.getAttribute('data-post-bg');
+  const textColor = body.getAttribute('data-text-color');
+  
+  if (bg) {
+    document.documentElement.style.setProperty('--primary-bg', bg);
+  }
+  if (headerBg) {
+    document.documentElement.style.setProperty('--secondary-bg', headerBg);
+  }
+  if (postBg) {
+    const posts = document.querySelectorAll('.post');
+    posts.forEach(post => {
+      post.style.backgroundColor = postBg;
+    });
+  }
+  if (textColor) {
+    document.documentElement.style.setProperty('--primary-text', textColor);
+  }
+});

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Art by Donna McAdams</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="admin-bar">
+    <span>✏️ Admin Dashboard</span>
+    <div>
+      <a href="/">View Site</a>
+      <a href="/admin/logout">Logout</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div style="padding: 40px;">
+      <h1 style="margin-bottom: 30px;">Admin Dashboard</h1>
+
+      <div class="dashboard-grid">
+        <div class="stat-card">
+          <h3>Blog Posts</h3>
+          <div class="stat-value"><%= stats.posts %></div>
+          <a href="/admin/blog" class="btn" style="margin-top: 15px;">Manage Posts</a>
+        </div>
+
+        <div class="stat-card">
+          <h3>Gallery Images</h3>
+          <div class="stat-value"><%= stats.images %></div>
+          <a href="/admin/gallery" class="btn" style="margin-top: 15px;">Manage Gallery</a>
+        </div>
+
+        <div class="stat-card">
+          <h3>Commission Requests</h3>
+          <div class="stat-value"><%= stats.requests %></div>
+          <p style="margin-top: 10px; color: var(--secondary-text);"><%= stats.pendingRequests %> pending</p>
+          <a href="/admin/requests" class="btn" style="margin-top: 15px;">Manage Requests</a>
+        </div>
+
+        <div class="stat-card">
+          <h3>Links</h3>
+          <div class="stat-value"><%= stats.links %></div>
+          <a href="/admin/links" class="btn" style="margin-top: 15px;">Manage Links</a>
+        </div>
+      </div>
+
+      <div style="margin-top: 40px;">
+        <h2 style="margin-bottom: 20px;">Quick Actions</h2>
+        <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+          <a href="/admin/blog" class="btn">Add Blog Post</a>
+          <a href="/admin/gallery" class="btn">Upload Image</a>
+          <a href="/admin/links" class="btn">Add Link</a>
+          <a href="/admin/settings" class="btn btn-secondary">Site Settings</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,4 +1,6 @@
 const express = require('express');
+const session = require('express-session');
+const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -6,12 +8,17 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Load environment variables (or use defaults)
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+const SESSION_SECRET = process.env.SESSION_SECRET || 'your-secret-key-change-in-production';
+
 // Data file paths
 const DATA_DIR = './data';
 const POSTS_FILE = path.join(DATA_DIR, 'posts.json');
 const GALLERY_FILE = path.join(DATA_DIR, 'gallery.json');
 const LINKS_FILE = path.join(DATA_DIR, 'links.json');
 const REQUESTS_FILE = path.join(DATA_DIR, 'requests.json');
+const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
 
 // Ensure data directory exists
 if (!fs.existsSync(DATA_DIR)) {
@@ -28,18 +35,6 @@ function initializeData() {
         title: "Welcome to My Art Site", 
         content: "This is my first post! I'm excited to share my artwork and thoughts with you.", 
         date: "2025-01-15" 
-      },
-      { 
-        id: 2, 
-        title: "New Series: Abstract Landscapes", 
-        content: "I've been working on a new series exploring abstract interpretations of natural landscapes. Using mixed media and bold colors to capture the essence of places I've visited.", 
-        date: "2025-01-20" 
-      },
-      { 
-        id: 3, 
-        title: "Studio Update", 
-        content: "Just finished setting up my new studio space. The natural lighting is perfect for working on larger pieces. Can't wait to see what emerges from this creative environment.", 
-        date: "2025-02-01" 
       }
     ];
     fs.writeFileSync(POSTS_FILE, JSON.stringify(samplePosts, null, 2));
@@ -59,6 +54,16 @@ function initializeData() {
   if (!fs.existsSync(REQUESTS_FILE)) {
     fs.writeFileSync(REQUESTS_FILE, JSON.stringify([], null, 2));
   }
+
+  // Initialize settings
+  if (!fs.existsSync(SETTINGS_FILE)) {
+    const defaultSettings = {
+      backgroundColor: '#ffffff',
+      postBackground: '#ffffff',
+      textColor: '#212529'
+    };
+    fs.writeFileSync(SETTINGS_FILE, JSON.stringify(defaultSettings, null, 2));
+  }
 }
 
 initializeData();
@@ -77,12 +82,57 @@ function writeJSON(filepath, data) {
   fs.writeFileSync(filepath, JSON.stringify(data, null, 2));
 }
 
+// Helper function to lighten a hex color by a percentage
+function lightenColor(hex, percent) {
+  // Remove # if present
+  hex = hex.replace('#', '');
+  
+  // Convert to RGB
+  let r = parseInt(hex.substr(0, 2), 16);
+  let g = parseInt(hex.substr(2, 2), 16);
+  let b = parseInt(hex.substr(4, 2), 16);
+  
+  // Lighten by moving towards white (255)
+  r = Math.round(r + (255 - r) * (percent / 100));
+  g = Math.round(g + (255 - g) * (percent / 100));
+  b = Math.round(b + (255 - b) * (percent / 100));
+  
+  // Ensure values are within 0-255
+  r = Math.min(255, Math.max(0, r));
+  g = Math.min(255, Math.max(0, g));
+  b = Math.min(255, Math.max(0, b));
+  
+  // Convert back to hex
+  const rHex = r.toString(16).padStart(2, '0');
+  const gHex = g.toString(16).padStart(2, '0');
+  const bHex = b.toString(16).padStart(2, '0');
+  
+  return '#' + rHex + gHex + bHex;
+}
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
+app.use(session({
+  secret: SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 24 * 60 * 60 * 1000 } // 24 hours
+}));
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+// Make settings and isAdmin available to all templates
+app.use((req, res, next) => {
+  const settings = readJSON(SETTINGS_FILE);
+  // Calculate header background as 10% lighter than main background
+  settings.headerBackground = lightenColor(settings.backgroundColor, 10);
+  res.locals.settings = settings;
+  res.locals.isAdmin = req.session.isAdmin || false;
+  next();
+});
 
 // File upload configuration
 const storage = multer.diskStorage({
@@ -99,7 +149,16 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Routes - Pages
+// Auth middleware
+function requireAdmin(req, res, next) {
+  if (req.session.isAdmin) {
+    next();
+  } else {
+    res.redirect('/admin/login');
+  }
+}
+
+// Routes - Public Pages
 app.get('/', (req, res) => {
   const posts = readJSON(POSTS_FILE);
   const recentPosts = posts.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
@@ -119,9 +178,7 @@ app.get('/gallery', (req, res) => {
 });
 
 app.get('/requests', (req, res) => {
-  const requests = readJSON(REQUESTS_FILE);
-  const sortedRequests = requests.sort((a, b) => new Date(b.submitted_at) - new Date(a.submitted_at));
-  res.render('requests', { requests: sortedRequests });
+  res.render('requests');
 });
 
 app.get('/links', (req, res) => {
@@ -137,6 +194,78 @@ app.get('/about', (req, res) => {
   res.render('about');
 });
 
+// Admin Routes - Login/Logout
+app.get('/admin/login', (req, res) => {
+  res.render('admin/login', { error: null });
+});
+
+app.post('/admin/login', (req, res) => {
+  const { password } = req.body;
+  
+  if (password === ADMIN_PASSWORD) {
+    req.session.isAdmin = true;
+    res.redirect('/admin/dashboard');
+  } else {
+    res.render('admin/login', { error: 'Invalid password' });
+  }
+});
+
+app.get('/admin/logout', (req, res) => {
+  req.session.destroy();
+  res.redirect('/');
+});
+
+// Admin Routes - Dashboard
+app.get('/admin/dashboard', requireAdmin, (req, res) => {
+  const posts = readJSON(POSTS_FILE);
+  const images = readJSON(GALLERY_FILE);
+  const requests = readJSON(REQUESTS_FILE);
+  const links = readJSON(LINKS_FILE);
+  
+  res.render('admin/dashboard', {
+    stats: {
+      posts: posts.length,
+      images: images.length,
+      requests: requests.length,
+      pendingRequests: requests.filter(r => r.status === 'incomplete').length,
+      links: links.length
+    }
+  });
+});
+
+// Admin Routes - Blog Management
+app.get('/admin/blog', requireAdmin, (req, res) => {
+  const posts = readJSON(POSTS_FILE);
+  const sortedPosts = posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+  res.render('admin/blog', { posts: sortedPosts });
+});
+
+// Admin Routes - Gallery Management
+app.get('/admin/gallery', requireAdmin, (req, res) => {
+  const images = readJSON(GALLERY_FILE);
+  const sortedImages = images.sort((a, b) => new Date(b.uploaded_at) - new Date(a.uploaded_at));
+  res.render('admin/gallery', { images: sortedImages });
+});
+
+// Admin Routes - Request Management
+app.get('/admin/requests', requireAdmin, (req, res) => {
+  const requests = readJSON(REQUESTS_FILE);
+  const sortedRequests = requests.sort((a, b) => new Date(b.submitted_at) - new Date(a.submitted_at));
+  res.render('admin/requests', { requests: sortedRequests });
+});
+
+// Admin Routes - Links Management
+app.get('/admin/links', requireAdmin, (req, res) => {
+  const links = readJSON(LINKS_FILE);
+  res.render('admin/links', { links });
+});
+
+// Admin Routes - Settings
+app.get('/admin/settings', requireAdmin, (req, res) => {
+  const settings = readJSON(SETTINGS_FILE);
+  res.render('admin/settings', { settings });
+});
+
 // API Routes - Blog Posts
 app.get('/api/posts', (req, res) => {
   const posts = readJSON(POSTS_FILE);
@@ -144,8 +273,8 @@ app.get('/api/posts', (req, res) => {
   res.json(sortedPosts);
 });
 
-app.post('/api/posts', (req, res) => {
-  const { title, content, date } = req.body;
+app.post('/api/posts', requireAdmin, upload.single('image'), (req, res) => {
+  const { title, content, date, imagePosition } = req.body;
   const posts = readJSON(POSTS_FILE);
   
   const newPost = {
@@ -153,24 +282,36 @@ app.post('/api/posts', (req, res) => {
     title,
     content,
     date,
+    image: req.file ? req.file.filename : null,
+    imagePosition: imagePosition || 'above', // 'above' or 'below'
     created_at: new Date().toISOString()
   };
   
   posts.push(newPost);
   writeJSON(POSTS_FILE, posts);
   
-  res.json({ id: newPost.id });
+  res.json({ id: newPost.id, success: true });
 });
 
-app.delete('/api/posts/:id', (req, res) => {
+app.delete('/api/posts/:id', requireAdmin, (req, res) => {
   const posts = readJSON(POSTS_FILE);
+  const post = posts.find(p => p.id === parseInt(req.params.id));
+  
+  // Delete associated image if exists
+  if (post && post.image) {
+    const filePath = path.join('./public/uploads', post.image);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+  }
+  
   const filteredPosts = posts.filter(p => p.id !== parseInt(req.params.id));
   writeJSON(POSTS_FILE, filteredPosts);
   res.json({ success: true });
 });
 
 // API Routes - Gallery
-app.post('/api/gallery', upload.single('image'), (req, res) => {
+app.post('/api/gallery', requireAdmin, upload.single('image'), (req, res) => {
   const { title, description } = req.body;
   const filename = req.file.filename;
   
@@ -187,15 +328,14 @@ app.post('/api/gallery', upload.single('image'), (req, res) => {
   images.push(newImage);
   writeJSON(GALLERY_FILE, images);
   
-  res.json({ id: newImage.id, filename });
+  res.json({ id: newImage.id, filename, success: true });
 });
 
-app.delete('/api/gallery/:id', (req, res) => {
+app.delete('/api/gallery/:id', requireAdmin, (req, res) => {
   const images = readJSON(GALLERY_FILE);
   const image = images.find(i => i.id === parseInt(req.params.id));
   
   if (image) {
-    // Delete the image file
     const filePath = path.join('./public/uploads', image.filename);
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
@@ -205,31 +345,6 @@ app.delete('/api/gallery/:id', (req, res) => {
   const filteredImages = images.filter(i => i.id !== parseInt(req.params.id));
   writeJSON(GALLERY_FILE, filteredImages);
   
-  res.json({ success: true });
-});
-
-// API Routes - Links
-app.post('/api/links', (req, res) => {
-  const { title, url, description } = req.body;
-  const links = readJSON(LINKS_FILE);
-  
-  const newLink = {
-    id: links.length > 0 ? Math.max(...links.map(l => l.id)) + 1 : 1,
-    title,
-    url,
-    description
-  };
-  
-  links.push(newLink);
-  writeJSON(LINKS_FILE, links);
-  
-  res.json({ id: newLink.id });
-});
-
-app.delete('/api/links/:id', (req, res) => {
-  const links = readJSON(LINKS_FILE);
-  const filteredLinks = links.filter(l => l.id !== parseInt(req.params.id));
-  writeJSON(LINKS_FILE, filteredLinks);
   res.json({ success: true });
 });
 
@@ -251,7 +366,7 @@ app.post('/api/requests', upload.array('images', 5), (req, res) => {
     timeline,
     images: imageFilenames,
     submitted_at: new Date().toISOString(),
-    status: 'pending'
+    status: 'incomplete'
   };
   
   requests.push(newRequest);
@@ -260,12 +375,25 @@ app.post('/api/requests', upload.array('images', 5), (req, res) => {
   res.json({ id: newRequest.id, success: true });
 });
 
-app.delete('/api/requests/:id', (req, res) => {
+app.patch('/api/requests/:id', requireAdmin, (req, res) => {
+  const { status } = req.body;
+  const requests = readJSON(REQUESTS_FILE);
+  
+  const request = requests.find(r => r.id === parseInt(req.params.id));
+  if (request) {
+    request.status = status;
+    writeJSON(REQUESTS_FILE, requests);
+    res.json({ success: true });
+  } else {
+    res.status(404).json({ error: 'Request not found' });
+  }
+});
+
+app.delete('/api/requests/:id', requireAdmin, (req, res) => {
   const requests = readJSON(REQUESTS_FILE);
   const request = requests.find(r => r.id === parseInt(req.params.id));
   
   if (request && request.images) {
-    // Delete associated image files
     request.images.forEach(filename => {
       const filePath = path.join('./public/uploads', filename);
       if (fs.existsSync(filePath)) {
@@ -280,7 +408,47 @@ app.delete('/api/requests/:id', (req, res) => {
   res.json({ success: true });
 });
 
+// API Routes - Links
+app.post('/api/links', requireAdmin, (req, res) => {
+  const { title, url, description } = req.body;
+  const links = readJSON(LINKS_FILE);
+  
+  const newLink = {
+    id: links.length > 0 ? Math.max(...links.map(l => l.id)) + 1 : 1,
+    title,
+    url,
+    description
+  };
+  
+  links.push(newLink);
+  writeJSON(LINKS_FILE, links);
+  
+  res.json({ id: newLink.id, success: true });
+});
+
+app.delete('/api/links/:id', requireAdmin, (req, res) => {
+  const links = readJSON(LINKS_FILE);
+  const filteredLinks = links.filter(l => l.id !== parseInt(req.params.id));
+  writeJSON(LINKS_FILE, filteredLinks);
+  res.json({ success: true });
+});
+
+// API Routes - Settings
+app.post('/api/settings', requireAdmin, (req, res) => {
+  const { backgroundColor, postBackground, textColor } = req.body;
+  
+  const settings = {
+    backgroundColor,
+    postBackground,
+    textColor
+  };
+  
+  writeJSON(SETTINGS_FILE, settings);
+  res.json({ success: true });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log('Press Ctrl+C to stop the server');
+  console.log(`Admin password: ${ADMIN_PASSWORD}`);
 });

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gallery Management</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="admin-bar">
+    <span>✏️ Gallery Management</span>
+    <div>
+      <a href="/admin/dashboard">Dashboard</a>
+      <a href="/">View Site</a>
+      <a href="/admin/logout">Logout</a>
+    </div>
+  </div>
+  <div class="container" style="padding: 40px;">
+    <h1 style="margin-bottom: 30px;">Manage Gallery</h1>
+    
+    <div class="admin-controls">
+      <h3>Upload New Image</h3>
+      <form id="uploadImageForm" enctype="multipart/form-data">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="imageTitle" required>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" id="imageDescription">
+        </div>
+        <div class="form-group">
+          <label>Image File</label>
+          <input type="file" id="imageFile" accept="image/*" required>
+        </div>
+        <button type="submit">Upload Image</button>
+      </form>
+    </div>
+
+    <h2 style="margin: 40px 0 20px;">All Images</h2>
+    <div class="gallery-grid">
+      <% images.forEach(image => { %>
+        <div class="gallery-item">
+          <img src="/uploads/<%= image.filename %>" alt="<%= image.title %>">
+          <div class="gallery-info">
+            <div class="gallery-title"><%= image.title %></div>
+            <% if (image.description) { %>
+              <div class="gallery-description"><%= image.description %></div>
+            <% } %>
+            <button onclick="deleteImage(<%= image.id %>)" class="btn-danger" style="margin-top: 10px; font-size: 12px;">Delete</button>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+  <script src="/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Site Settings</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="admin-bar">
+    <span>⚙️ Site Settings</span>
+    <div>
+      <a href="/admin/dashboard">Dashboard</a>
+      <a href="/">View Site</a>
+      <a href="/admin/logout">Logout</a>
+    </div>
+  </div>
+  <div class="container" style="padding: 40px;">
+    <h1 style="margin-bottom: 30px;">Site Settings</h1>
+    
+    <div class="admin-controls">
+      <h3>Customize Colors</h3>
+      <p style="margin-bottom: 20px; color: var(--secondary-text);">
+        Use the color pickers below to customize your site's appearance. The header and sidebar will automatically be 10% lighter than your background color for a pleasing contrast.
+      </p>
+      
+      <form id="settingsForm">
+        <div class="form-group">
+          <label>Background Color</label>
+          <p style="font-size: 13px; color: var(--secondary-text); margin-bottom: 8px;">Main page background color (header/sidebar will be automatically lightened)</p>
+          <input type="color" id="backgroundColor" value="<%= settings.backgroundColor %>">
+        </div>
+        
+        <div class="form-group">
+          <label>Post Background</label>
+          <p style="font-size: 13px; color: var(--secondary-text); margin-bottom: 8px;">Background color for blog post cards</p>
+          <input type="color" id="postBackground" value="<%= settings.postBackground %>">
+        </div>
+        
+        <div class="form-group">
+          <label>Text Color</label>
+          <p style="font-size: 13px; color: var(--secondary-text); margin-bottom: 8px;">Main text color throughout the site</p>
+          <input type="color" id="textColor" value="<%= settings.textColor %>">
+        </div>
+        
+        <button type="submit">Save Settings</button>
+      </form>
+      
+      <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px;">
+        <strong>💡 Tip:</strong> The header and sidebar automatically use a color 10% lighter than your background for a cohesive look. Just pick one background color and the rest is handled for you!
+      </div>
+      
+      <div style="margin-top: 20px; padding: 20px; background: #e7f3ff; border: 1px solid #0d6efd; border-radius: 6px;">
+        <strong>Preview:</strong> Visit the <a href="/" target="_blank">main site</a> in a new tab to see your changes after saving.
+      </div>
+    </div>
+  </div>
+  <script src="/script.js"></script>
+</body>
+</html>
