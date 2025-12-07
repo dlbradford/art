@@ -16,5 +16,14 @@
     "title": "Studio Update",
     "content": "Just finished setting up my new studio space. The natural lighting is perfect for working on larger pieces. Can't wait to see what emerges from this creative environment.",
     "date": "2025-02-01"
+  },
+  {
+    "id": 4,
+    "title": "Bobby Cat",
+    "content": "Test",
+    "date": "2025-12-07",
+    "image": "1765134185021.jpeg",
+    "imagePosition": "below",
+    "created_at": "2025-12-07T19:03:05.022Z"
   }
 ]

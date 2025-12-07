@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "id": 1,
+    "title": "Bobby the Cat",
+    "filename": "1765134343421.jpeg",
+    "description": "important feline",
+    "uploaded_at": "2025-12-07T19:05:43.422Z"
+  }
+]
