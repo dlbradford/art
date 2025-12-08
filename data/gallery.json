@@ -5,5 +5,26 @@
     "filename": "1765134343421.jpeg",
     "description": "important feline",
     "uploaded_at": "2025-12-07T19:05:43.422Z"
+  },
+  {
+    "id": 2,
+    "title": "Golden Boy",
+    "filename": "1765210262858.JPEG",
+    "description": "Golden Retriever",
+    "uploaded_at": "2025-12-08T16:11:02.861Z"
+  },
+  {
+    "id": 3,
+    "title": "Rooster",
+    "filename": "1765210335514.JPEG",
+    "description": "Some type of Chicken",
+    "uploaded_at": "2025-12-08T16:12:15.516Z"
+  },
+  {
+    "id": 4,
+    "title": "Heron",
+    "filename": "1765210365616.JPEG",
+    "description": "Great Blue Heron",
+    "uploaded_at": "2025-12-08T16:12:45.616Z"
   }
 ]

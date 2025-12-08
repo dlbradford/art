@@ -27,18 +27,19 @@ body {
 }
 
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
   padding: 0;
 }
 
-/* Header Styles - NO SHADOW per requirement #5 */
+/* Header Styles - NO SHADOW per requirement #5, NO BORDER for clean design */
 header {
   background: var(--secondary-bg);
-  border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
   z-index: 100;
+  width: 100%;
 }
 
 .site-title {
@@ -77,13 +78,13 @@ header {
   gap: 0;
   margin-top: 0;
   min-height: calc(100vh - 200px);
+  width: 100%;
 }
 
 .sidebar {
   width: 220px;
   flex-shrink: 0;
   background: var(--secondary-bg);
-  border-right: 1px solid var(--border-color);
 }
 
 .sidebar nav {
@@ -129,6 +130,7 @@ header {
   background: var(--primary-bg);
   padding: 40px;
   min-height: 600px;
+  width: 100%;
 }
 
 /* Carousel/Hero Section */
@@ -661,8 +663,6 @@ footer {
   
   .sidebar {
     width: 100%;
-    border-right: none;
-    border-bottom: 1px solid var(--border-color);
   }
 
   .sidebar nav {
