@@ -232,6 +232,107 @@ async function deleteImage(id) {
   }
 }
 
+// Edit gallery image (Admin only)
+function editImage(id) {
+  const galleryItem = document.querySelector(`[data-image-id="${id}"]`);
+  if (!galleryItem) return;
+  
+  const titleElement = galleryItem.querySelector('[data-field="title"]');
+  const descElement = galleryItem.querySelector('[data-field="description"]');
+  
+  const currentTitle = titleElement.textContent;
+  const currentDesc = descElement.textContent === 'No description' ? '' : descElement.textContent;
+  
+  // Replace with input fields
+  titleElement.innerHTML = `<input type="text" value="${currentTitle}" id="edit-title-${id}" style="width: 100%; padding: 6px; border: 2px solid #0d6efd; border-radius: 4px; font-size: 14px; font-weight: 600;">`;
+  descElement.innerHTML = `<textarea id="edit-desc-${id}" style="width: 100%; padding: 6px; border: 2px solid #0d6efd; border-radius: 4px; font-size: 13px; min-height: 60px; resize: vertical;">${currentDesc}</textarea>`;
+  
+  // Replace buttons
+  const buttonContainer = galleryItem.querySelector('div[style*="display: flex"]');
+  buttonContainer.innerHTML = `
+    <button onclick="saveImageEdit(${id})" class="btn-success" style="flex: 1; font-size: 12px;">Save</button>
+    <button onclick="cancelImageEdit(${id}, '${currentTitle.replace(/'/g, "\\'")}', '${currentDesc.replace(/'/g, "\\'")}', '${currentDesc ? 'false' : 'true'}')" class="btn-secondary" style="flex: 1; font-size: 12px;">Cancel</button>
+  `;
+  
+  // Focus on title input
+  document.getElementById(`edit-title-${id}`).focus();
+}
+
+// Save image edit
+async function saveImageEdit(id) {
+  const newTitle = document.getElementById(`edit-title-${id}`).value.trim();
+  const newDesc = document.getElementById(`edit-desc-${id}`).value.trim();
+  
+  if (!newTitle) {
+    showToast('Title cannot be empty', 'error');
+    return;
+  }
+  
+  try {
+    const response = await fetch(`/api/gallery/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: newTitle, description: newDesc })
+    });
+    
+    if (response.ok) {
+      const galleryItem = document.querySelector(`[data-image-id="${id}"]`);
+      const titleElement = galleryItem.querySelector('[data-field="title"]');
+      const descElement = galleryItem.querySelector('[data-field="description"]');
+      
+      // Update display
+      titleElement.textContent = newTitle;
+      descElement.textContent = newDesc || 'No description';
+      if (!newDesc) {
+        descElement.style.color = '#999';
+        descElement.style.fontStyle = 'italic';
+      } else {
+        descElement.style.color = '';
+        descElement.style.fontStyle = '';
+      }
+      
+      // Restore buttons
+      const buttonContainer = galleryItem.querySelector('div[style*="display: flex"]');
+      buttonContainer.innerHTML = `
+        <button onclick="editImage(${id})" class="btn-edit" style="flex: 1; font-size: 12px;">Edit</button>
+        <button onclick="deleteImage(${id})" class="btn-danger" style="flex: 1; font-size: 12px;">Delete</button>
+      `;
+      
+      showToast('Image updated successfully!', 'success');
+    } else {
+      showToast('Error updating image', 'error');
+    }
+  } catch (error) {
+    showToast('Error: ' + error.message, 'error');
+  }
+}
+
+// Cancel image edit
+function cancelImageEdit(id, originalTitle, originalDesc, wasEmpty) {
+  const galleryItem = document.querySelector(`[data-image-id="${id}"]`);
+  const titleElement = galleryItem.querySelector('[data-field="title"]');
+  const descElement = galleryItem.querySelector('[data-field="description"]');
+  
+  // Restore original values
+  titleElement.textContent = originalTitle;
+  if (wasEmpty === 'true') {
+    descElement.textContent = 'No description';
+    descElement.style.color = '#999';
+    descElement.style.fontStyle = 'italic';
+  } else {
+    descElement.textContent = originalDesc;
+    descElement.style.color = '';
+    descElement.style.fontStyle = '';
+  }
+  
+  // Restore buttons
+  const buttonContainer = galleryItem.querySelector('div[style*="display: flex"]');
+  buttonContainer.innerHTML = `
+    <button onclick="editImage(${id})" class="btn-edit" style="flex: 1; font-size: 12px;">Edit</button>
+    <button onclick="deleteImage(${id})" class="btn-danger" style="flex: 1; font-size: 12px;">Delete</button>
+  `;
+}
+
 // Helper function for toast notifications
 function showToast(message, type = 'info') {
   const toast = document.createElement('div');

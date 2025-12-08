@@ -38,14 +38,19 @@
     <h2 style="margin: 40px 0 20px;">All Images</h2>
     <div class="gallery-grid">
       <% images.forEach(image => { %>
-        <div class="gallery-item">
+        <div class="gallery-item" data-image-id="<%= image.id %>">
           <img src="/uploads/<%= image.filename %>" alt="<%= image.title %>">
           <div class="gallery-info">
-            <div class="gallery-title"><%= image.title %></div>
+            <div class="gallery-title" data-field="title"><%= image.title %></div>
             <% if (image.description) { %>
-              <div class="gallery-description"><%= image.description %></div>
+              <div class="gallery-description" data-field="description"><%= image.description %></div>
+            <% } else { %>
+              <div class="gallery-description" data-field="description" style="color: #999; font-style: italic;">No description</div>
             <% } %>
-            <button onclick="deleteImage(<%= image.id %>)" class="btn-danger" style="margin-top: 10px; font-size: 12px;">Delete</button>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+              <button onclick="editImage(<%= image.id %>)" class="btn-edit" style="flex: 1; font-size: 12px;">Edit</button>
+              <button onclick="deleteImage(<%= image.id %>)" class="btn-danger" style="flex: 1; font-size: 12px;">Delete</button>
+            </div>
           </div>
         </div>
       <% }); %>

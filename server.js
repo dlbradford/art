@@ -348,6 +348,25 @@ app.delete('/api/gallery/:id', requireAdmin, (req, res) => {
   res.json({ success: true });
 });
 
+app.patch('/api/gallery/:id', requireAdmin, (req, res) => {
+  const { title, description } = req.body;
+  const images = readJSON(GALLERY_FILE);
+  const imageIndex = images.findIndex(i => i.id === parseInt(req.params.id));
+  
+  if (imageIndex === -1) {
+    return res.status(404).json({ error: 'Image not found' });
+  }
+  
+  // Update title and description
+  images[imageIndex].title = title;
+  images[imageIndex].description = description;
+  images[imageIndex].updated_at = new Date().toISOString();
+  
+  writeJSON(GALLERY_FILE, images);
+  
+  res.json({ success: true, image: images[imageIndex] });
+});
+
 // API Routes - Commission Requests
 app.post('/api/requests', upload.array('images', 5), (req, res) => {
   const { name, email, type, size, budget, description, timeline } = req.body;
