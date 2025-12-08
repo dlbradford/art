@@ -145,9 +145,13 @@ if (uploadImageForm) {
   uploadImageForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
+    // Save values before clearing
+    const title = document.getElementById('imageTitle').value;
+    const description = document.getElementById('imageDescription').value;
+    
     const formData = new FormData();
-    formData.append('title', document.getElementById('imageTitle').value);
-    formData.append('description', document.getElementById('imageDescription').value);
+    formData.append('title', title);
+    formData.append('description', description);
     formData.append('image', document.getElementById('imageFile').files[0]);
 
     try {
@@ -157,8 +161,30 @@ if (uploadImageForm) {
       });
 
       if (response.ok) {
-        alert('Image uploaded successfully!');
-        window.location.reload();
+        const result = await response.json();
+        
+        // Clear the form for next upload
+        document.getElementById('imageTitle').value = '';
+        document.getElementById('imageDescription').value = '';
+        document.getElementById('imageFile').value = '';
+        
+        // Add the new image to the gallery display
+        const galleryGrid = document.querySelector('.gallery-grid');
+        if (galleryGrid) {
+          const newImageHTML = `
+            <div class="gallery-item">
+              <img src="/uploads/${result.filename}" alt="${title}">
+              <div class="gallery-info">
+                <div class="gallery-title">${title}</div>
+                ${description ? `<div class="gallery-description">${description}</div>` : ''}
+                <button onclick="deleteImage(${result.id})" class="btn-danger" style="margin-top: 10px; font-size: 12px;">Delete</button>
+              </div>
+            </div>
+          `;
+          galleryGrid.insertAdjacentHTML('afterbegin', newImageHTML);
+        }
+        
+        alert('Image uploaded successfully! Form cleared for next upload.');
       } else {
         alert('Error uploading image');
       }
