@@ -129,13 +129,14 @@ async function deletePost(id) {
     });
 
     if (response.ok) {
-      alert('Post deleted successfully!');
-      window.location.reload();
+      showToast('Post deleted successfully!', 'success');
+      // Reload after a brief delay to show toast
+      setTimeout(() => window.location.reload(), 1000);
     } else {
-      alert('Error deleting post');
+      showToast('Error deleting post', 'error');
     }
   } catch (error) {
-    alert('Error: ' + error.message);
+    showToast('Error: ' + error.message, 'error');
   }
 }
 
@@ -196,7 +197,15 @@ if (uploadImageForm) {
 
 // Delete gallery image (Admin only)
 async function deleteImage(id) {
-  if (!confirm('Are you sure you want to delete this image?')) return;
+  // Try to show confirmation, but proceed even if browser blocks it
+  try {
+    const shouldDelete = confirm('Are you sure you want to delete this image?');
+    if (shouldDelete === false) return; // Only return if user explicitly clicked Cancel
+  } catch (e) {
+    // If confirm is blocked, show a custom prompt
+    const shouldDelete = window.confirm('Delete this image?');
+    if (!shouldDelete) return;
+  }
 
   try {
     const response = await fetch(`/api/gallery/${id}`, {
@@ -204,14 +213,36 @@ async function deleteImage(id) {
     });
 
     if (response.ok) {
-      alert('Image deleted successfully!');
-      window.location.reload();
+      // Remove the image from the page immediately instead of reloading
+      const imageElement = document.querySelector(`button[onclick="deleteImage(${id})"]`)?.closest('.gallery-item');
+      if (imageElement) {
+        imageElement.style.transition = 'all 0.3s ease';
+        imageElement.style.opacity = '0';
+        imageElement.style.transform = 'scale(0.8)';
+        setTimeout(() => imageElement.remove(), 300);
+      }
+      
+      // Show success toast notification
+      showToast('Image deleted successfully!', 'success');
     } else {
-      alert('Error deleting image');
+      showToast('Error deleting image', 'error');
     }
   } catch (error) {
-    alert('Error: ' + error.message);
+    showToast('Error: ' + error.message, 'error');
   }
+}
+
+// Helper function for toast notifications
+function showToast(message, type = 'info') {
+  const toast = document.createElement('div');
+  toast.textContent = message;
+  const bgColor = type === 'success' ? '#198754' : type === 'error' ? '#dc3545' : '#0d6efd';
+  toast.style.cssText = `position:fixed;top:20px;right:20px;background:${bgColor};color:white;padding:15px 25px;border-radius:6px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.15);font-size:14px;font-weight:500;animation:slideIn 0.3s ease;`;
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.style.animation = 'slideOut 0.3s ease';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
 }
 
 // Add link (Admin only)
@@ -255,13 +286,13 @@ async function deleteLink(id) {
     });
 
     if (response.ok) {
-      alert('Link deleted successfully!');
-      window.location.reload();
+      showToast('Link deleted successfully!', 'success');
+      setTimeout(() => window.location.reload(), 1000);
     } else {
-      alert('Error deleting link');
+      showToast('Error deleting link', 'error');
     }
   } catch (error) {
-    alert('Error: ' + error.message);
+    showToast('Error: ' + error.message, 'error');
   }
 }
 
@@ -348,13 +379,13 @@ async function deleteRequest(id) {
     });
 
     if (response.ok) {
-      alert('Request deleted successfully!');
-      window.location.reload();
+      showToast('Request deleted successfully!', 'success');
+      setTimeout(() => window.location.reload(), 1000);
     } else {
-      alert('Error deleting request');
+      showToast('Error deleting request', 'error');
     }
   } catch (error) {
-    alert('Error: ' + error.message);
+    showToast('Error: ' + error.message, 'error');
   }
 }
 
