@@ -310,6 +310,54 @@ app.delete('/api/posts/:id', requireAdmin, (req, res) => {
   res.json({ success: true });
 });
 
+app.patch('/api/posts/:id', requireAdmin, upload.single('image'), (req, res) => {
+  const { title, content, date, imagePosition, removeImage } = req.body;
+  const posts = readJSON(POSTS_FILE);
+  const postIndex = posts.findIndex(p => p.id === parseInt(req.params.id));
+  
+  if (postIndex === -1) {
+    return res.status(404).json({ error: 'Post not found' });
+  }
+  
+  const post = posts[postIndex];
+  
+  // Handle image removal
+  if (removeImage === 'true' && post.image) {
+    const filePath = path.join('./public/uploads', post.image);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+    post.image = null;
+    post.imagePosition = null;
+  }
+  
+  // Handle image replacement
+  if (req.file) {
+    // Delete old image if exists
+    if (post.image) {
+      const oldFilePath = path.join('./public/uploads', post.image);
+      if (fs.existsSync(oldFilePath)) {
+        fs.unlinkSync(oldFilePath);
+      }
+    }
+    post.image = req.file.filename;
+    post.imagePosition = imagePosition || 'above';
+  } else if (imagePosition && post.image) {
+    // Just update position if image exists
+    post.imagePosition = imagePosition;
+  }
+  
+  // Update text fields
+  post.title = title;
+  post.content = content;
+  post.date = date;
+  post.updated_at = new Date().toISOString();
+  
+  writeJSON(POSTS_FILE, posts);
+  
+  res.json({ success: true, post });
+});
+
 // API Routes - Gallery
 app.post('/api/gallery', requireAdmin, upload.single('image'), (req, res) => {
   const { title, description } = req.body;

@@ -140,6 +140,173 @@ async function deletePost(id) {
   }
 }
 
+// Edit blog post (Admin only)
+function editPost(id) {
+  const postElement = document.querySelector(`[data-post-id="${id}"]`);
+  if (!postElement) return;
+  
+  const title = postElement.dataset.title;
+  const date = postElement.dataset.date;
+  const content = postElement.dataset.content.replace(/\\n/g, '\n');
+  const image = postElement.dataset.image;
+  const imagePosition = postElement.dataset.imagePosition || 'above';
+  
+  // Build edit form HTML
+  const editFormHTML = `
+    <div class="post-edit-form">
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" id="edit-title-${id}" value="${title}" style="width: 100%; padding: 10px; border: 2px solid #0d6efd; border-radius: 6px; font-size: 16px; font-weight: 600;">
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="edit-date-${id}" value="${date}" style="width: 100%; padding: 10px; border: 2px solid #0d6efd; border-radius: 6px;">
+      </div>
+      <div class="form-group">
+        <label>Content</label>
+        <textarea id="edit-content-${id}" style="width: 100%; min-height: 200px; padding: 10px; border: 2px solid #0d6efd; border-radius: 6px; font-size: 14px; line-height: 1.6; resize: vertical;">${content}</textarea>
+      </div>
+      ${image ? `
+        <div class="form-group">
+          <label>Current Image</label>
+          <div style="margin-bottom: 10px;">
+            <img src="/uploads/${image}" alt="${title}" style="max-width: 300px; height: auto; border-radius: 6px; box-shadow: var(--shadow);">
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+            <label style="display: flex; align-items: center; font-weight: normal;">
+              <input type="radio" name="edit-image-position-${id}" value="above" ${imagePosition === 'above' ? 'checked' : ''} style="margin-right: 6px;">
+              Above text
+            </label>
+            <label style="display: flex; align-items: center; font-weight: normal;">
+              <input type="radio" name="edit-image-position-${id}" value="below" ${imagePosition === 'below' ? 'checked' : ''} style="margin-right: 6px;">
+              Below text
+            </label>
+          </div>
+          <button type="button" onclick="removePostImage(${id})" class="btn-danger" style="font-size: 13px; padding: 6px 12px;">Remove Image</button>
+        </div>
+      ` : ''}
+      <div class="form-group">
+        <label>${image ? 'Replace' : 'Add'} Image (Optional)</label>
+        <input type="file" id="edit-image-${id}" accept="image/*" style="width: 100%;">
+        <div id="edit-image-position-group-${id}" style="display: ${image ? 'none' : 'none'}; margin-top: 10px;">
+          <label>Image Position</label>
+          <div style="display: flex; gap: 20px; margin-top: 8px;">
+            <label style="display: flex; align-items: center; font-weight: normal;">
+              <input type="radio" name="edit-new-image-position-${id}" value="above" checked style="margin-right: 6px;">
+              Above text
+            </label>
+            <label style="display: flex; align-items: center; font-weight: normal;">
+              <input type="radio" name="edit-new-image-position-${id}" value="below" style="margin-right: 6px;">
+              Below text
+            </label>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button onclick="savePostEdit(${id})" class="btn-success" style="flex: 1;">Save Changes</button>
+        <button onclick="cancelPostEdit(${id})" class="btn-secondary" style="flex: 1;">Cancel</button>
+      </div>
+    </div>
+  `;
+  
+  // Replace post content with edit form
+  postElement.innerHTML = editFormHTML;
+  
+  // Show position selector when new image is selected
+  const imageInput = document.getElementById(`edit-image-${id}`);
+  const positionGroup = document.getElementById(`edit-image-position-group-${id}`);
+  imageInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+      positionGroup.style.display = 'block';
+    } else {
+      positionGroup.style.display = 'none';
+    }
+  });
+  
+  // Focus on title
+  document.getElementById(`edit-title-${id}`).focus();
+}
+
+// Save blog post edit
+async function savePostEdit(id) {
+  const title = document.getElementById(`edit-title-${id}`).value.trim();
+  const date = document.getElementById(`edit-date-${id}`).value;
+  const content = document.getElementById(`edit-content-${id}`).value.trim();
+  const imageFile = document.getElementById(`edit-image-${id}`).files[0];
+  
+  if (!title || !date || !content) {
+    showToast('Title, date, and content are required', 'error');
+    return;
+  }
+  
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('date', date);
+  formData.append('content', content);
+  
+  // Handle new image
+  if (imageFile) {
+    formData.append('image', imageFile);
+    const newImagePosition = document.querySelector(`input[name="edit-new-image-position-${id}"]:checked`)?.value || 'above';
+    formData.append('imagePosition', newImagePosition);
+  } else {
+    // Check if updating existing image position
+    const existingImagePosition = document.querySelector(`input[name="edit-image-position-${id}"]:checked`)?.value;
+    if (existingImagePosition) {
+      formData.append('imagePosition', existingImagePosition);
+    }
+  }
+  
+  try {
+    const response = await fetch(`/api/posts/${id}`, {
+      method: 'PATCH',
+      body: formData
+    });
+    
+    if (response.ok) {
+      showToast('Post updated successfully!', 'success');
+      setTimeout(() => window.location.reload(), 1000);
+    } else {
+      showToast('Error updating post', 'error');
+    }
+  } catch (error) {
+    showToast('Error: ' + error.message, 'error');
+  }
+}
+
+// Remove image from post
+function removePostImage(id) {
+  if (!confirm('Remove the image from this post?')) return;
+  
+  const formData = new FormData();
+  const postElement = document.querySelector(`[data-post-id="${id}"]`);
+  formData.append('title', postElement.dataset.title);
+  formData.append('date', postElement.dataset.date);
+  formData.append('content', postElement.dataset.content.replace(/\\n/g, '\n'));
+  formData.append('removeImage', 'true');
+  
+  fetch(`/api/posts/${id}`, {
+    method: 'PATCH',
+    body: formData
+  })
+  .then(response => {
+    if (response.ok) {
+      showToast('Image removed successfully!', 'success');
+      setTimeout(() => window.location.reload(), 1000);
+    } else {
+      showToast('Error removing image', 'error');
+    }
+  })
+  .catch(error => {
+    showToast('Error: ' + error.message, 'error');
+  });
+}
+
+// Cancel blog post edit
+function cancelPostEdit(id) {
+  window.location.reload();
+}
+
 // Gallery image upload (Admin only)
 const uploadImageForm = document.getElementById('uploadImageForm');
 if (uploadImageForm) {
