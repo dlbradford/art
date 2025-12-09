@@ -41,6 +41,12 @@
           <input type="color" id="textColor" value="<%= settings.textColor %>">
         </div>
         
+        <div class="form-group">
+          <label>Carousel Timer (seconds)</label>
+          <p style="font-size: 13px; color: var(--secondary-text); margin-bottom: 8px;">How many seconds to show each image before auto-advancing (minimum 3 seconds)</p>
+          <input type="number" id="carouselTimer" min="3" max="30" value="<%= settings.carouselTimer || 5 %>" style="width: 150px;">
+        </div>
+        
         <button type="submit">Save Settings</button>
       </form>
       

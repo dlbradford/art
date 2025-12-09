@@ -163,8 +163,12 @@ app.get('/', (req, res) => {
   const posts = readJSON(POSTS_FILE);
   const recentPosts = posts.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
   
+  const images = readJSON(GALLERY_FILE);
+  const carouselImages = images.filter(img => img.inCarousel === true);
+  
   res.render('index', { 
     posts: recentPosts,
+    carouselImages: carouselImages,
     title: 'Home',
     description: 'Contemporary mixed media artwork by Donna McAdams. Explore original paintings, abstract art, and commission custom pieces.',
     canonicalPath: '/',
@@ -518,7 +522,7 @@ app.delete('/api/gallery/:id', requireAdmin, (req, res) => {
 });
 
 app.patch('/api/gallery/:id', requireAdmin, (req, res) => {
-  const { title, description } = req.body;
+  const { title, description, inCarousel } = req.body;
   const images = readJSON(GALLERY_FILE);
   const imageIndex = images.findIndex(i => i.id === parseInt(req.params.id));
   
@@ -529,6 +533,12 @@ app.patch('/api/gallery/:id', requireAdmin, (req, res) => {
   // Update title and description
   images[imageIndex].title = title;
   images[imageIndex].description = description;
+  
+  // Update carousel status if provided
+  if (inCarousel !== undefined) {
+    images[imageIndex].inCarousel = inCarousel === true || inCarousel === 'true';
+  }
+  
   images[imageIndex].updated_at = new Date().toISOString();
   
   writeJSON(GALLERY_FILE, images);
@@ -623,12 +633,13 @@ app.delete('/api/links/:id', requireAdmin, (req, res) => {
 
 // API Routes - Settings
 app.post('/api/settings', requireAdmin, (req, res) => {
-  const { backgroundColor, postBackground, textColor } = req.body;
+  const { backgroundColor, postBackground, textColor, carouselTimer } = req.body;
   
   const settings = {
     backgroundColor,
     postBackground,
-    textColor
+    textColor,
+    carouselTimer: carouselTimer || 5
   };
   
   writeJSON(SETTINGS_FILE, settings);

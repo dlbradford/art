@@ -47,6 +47,15 @@
             <% } else { %>
               <div class="gallery-description" data-field="description" style="color: #999; font-style: italic;">No description</div>
             <% } %>
+            <div style="margin: 10px 0;">
+              <label style="display: flex; align-items: center; font-size: 13px; cursor: pointer;">
+                <input type="checkbox" 
+                       <%= image.inCarousel ? 'checked' : '' %>
+                       onchange="toggleCarousel(<%= image.id %>, this.checked)"
+                       style="width: auto; margin-right: 8px; cursor: pointer;">
+                <span>Show in carousel</span>
+              </label>
+            </div>
             <div style="display: flex; gap: 10px; margin-top: 10px;">
               <button onclick="editImage(<%= image.id %>)" class="btn-edit" style="flex: 1; font-size: 12px;">Edit</button>
               <button onclick="deleteImage(<%= image.id %>)" class="btn-danger" style="flex: 1; font-size: 12px;">Delete</button>

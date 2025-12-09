@@ -2,18 +2,42 @@
   title: 'Home',
   page: 'home',
   body: `
-    <div class="carousel">
-      <div class="carousel-inner">
-        <div class="carousel-arrows left" onclick="prevSlide()">&#9664;</div>
-        <div class="carousel-content">
-          <h2 style="font-size: 28px; margin-bottom: 15px;">Welcome to My Art Portfolio</h2>
-          <p style="font-size: 16px;">Exploring color, form, and expression through mixed media</p>
+    ${carouselImages && carouselImages.length > 0 ? `
+      <div class="carousel" data-timer="${settings.carouselTimer || 5}">
+        <div class="carousel-inner">
+          <div class="carousel-arrows left" onclick="prevSlide()">&#9664;</div>
+          <div class="carousel-slides">
+            ${carouselImages.map((image, index) => `
+              <div class="carousel-slide ${index === 0 ? 'active' : ''}" style="display: ${index === 0 ? 'block' : 'none'};">
+                <img src="/uploads/${image.filename}" alt="${image.title}" style="max-width: 100%; max-height: 500px; width: auto; height: auto; display: block; margin: 0 auto; border-radius: 8px; box-shadow: var(--shadow-lg);">
+                <div style="text-align: center; margin-top: 15px;">
+                  <h3 style="font-size: 20px; margin-bottom: 8px; color: ${settings.textColor};">${image.title}</h3>
+                  ${image.description ? `<p style="font-size: 14px; color: ${settings.textColor}; opacity: 0.8;">${image.description}</p>` : ''}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="carousel-arrows right" onclick="nextSlide()">&#9654;</div>
         </div>
-        <div class="carousel-arrows right" onclick="nextSlide()">&#9654;</div>
+        <div class="carousel-dots" style="text-align: center; margin-top: 20px;">
+          ${carouselImages.map((_, index) => `
+            <span class="carousel-dot ${index === 0 ? 'active' : ''}" onclick="goToSlide(${index})"></span>
+          `).join('')}
+        </div>
       </div>
-    </div>
+    ` : `
+      <div class="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-content">
+            <h2 style="font-size: 28px; margin-bottom: 15px;">Welcome to My Art Portfolio</h2>
+            <p style="font-size: 16px;">Exploring color, form, and expression through mixed media</p>
+            <p style="font-size: 14px; margin-top: 10px; opacity: 0.7;">No carousel images selected. Visit the gallery management to add images to the carousel.</p>
+          </div>
+        </div>
+      </div>
+    `}
 
-    <h2 style="font-size: 28px; margin-bottom: 25px; font-weight: 600;">Recent Posts</h2>
+    <h2 style="font-size: 28px; margin: 40px 0 25px; font-weight: 600;">Recent Posts</h2>
     
     ${posts && posts.length > 0 ? 
       posts.map(post => `

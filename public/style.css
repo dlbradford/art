@@ -195,6 +195,47 @@ header {
   padding: 40px;
 }
 
+.carousel-slides {
+  width: 100%;
+}
+
+.carousel-slide {
+  width: 100%;
+  animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.carousel-dots {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.carousel-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  margin: 0 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.carousel-dot:hover {
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(1.2);
+}
+
+.carousel-dot.active {
+  background: rgba(255, 255, 255, 0.9);
+  width: 14px;
+  height: 14px;
+}
+
 /* Blog Post Styles */
 .post {
   background: white;

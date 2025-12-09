@@ -1,43 +1,78 @@
-// Carousel functionality
+// Carousel functionality for gallery images
 let currentSlide = 0;
-const slides = [
-  {
-    title: "Welcome to My Art Portfolio",
-    description: "Exploring color, form, and expression through mixed media"
-  },
-  {
-    title: "New Collection Available",
-    description: "Discover my latest series of abstract landscapes"
-  },
-  {
-    title: "Commission Work Accepted",
-    description: "Let's create something unique together"
-  }
-];
 
 function updateCarousel() {
-  const carouselContent = document.querySelector('.carousel-content');
-  if (carouselContent) {
-    const slide = slides[currentSlide];
-    carouselContent.innerHTML = `
-      <h2 style="font-size: 28px; margin-bottom: 15px;">${slide.title}</h2>
-      <p style="font-size: 16px;">${slide.description}</p>
-    `;
+  const slides = document.querySelectorAll('.carousel-slide');
+  const dots = document.querySelectorAll('.carousel-dot');
+  
+  if (slides.length === 0) return;
+  
+  // Hide all slides
+  slides.forEach((slide, index) => {
+    slide.style.display = 'none';
+    slide.classList.remove('active');
+  });
+  
+  // Remove active from all dots
+  dots.forEach(dot => dot.classList.remove('active'));
+  
+  // Show current slide
+  if (slides[currentSlide]) {
+    slides[currentSlide].style.display = 'block';
+    slides[currentSlide].classList.add('active');
+  }
+  
+  // Activate current dot
+  if (dots[currentSlide]) {
+    dots[currentSlide].classList.add('active');
   }
 }
 
 function nextSlide() {
+  const slides = document.querySelectorAll('.carousel-slide');
+  if (slides.length === 0) return;
   currentSlide = (currentSlide + 1) % slides.length;
   updateCarousel();
 }
 
 function prevSlide() {
+  const slides = document.querySelectorAll('.carousel-slide');
+  if (slides.length === 0) return;
   currentSlide = (currentSlide - 1 + slides.length) % slides.length;
   updateCarousel();
 }
 
-// Auto-advance carousel
-setInterval(nextSlide, 5000);
+function goToSlide(index) {
+  const slides = document.querySelectorAll('.carousel-slide');
+  if (slides.length === 0) return;
+  currentSlide = index;
+  updateCarousel();
+}
+
+// Auto-advance carousel based on settings
+function startCarouselTimer() {
+  const carousel = document.querySelector('.carousel');
+  if (!carousel) return;
+  
+  const slides = document.querySelectorAll('.carousel-slide');
+  if (slides.length <= 1) return;
+  
+  const timerSeconds = parseInt(carousel.dataset.timer) || 5;
+  const timerMs = timerSeconds * 1000;
+  
+  setInterval(() => {
+    if (document.querySelectorAll('.carousel-slide').length > 1) {
+      nextSlide();
+    }
+  }, timerMs);
+}
+
+// Start timer when page loads
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startCarouselTimer);
+} else {
+  startCarouselTimer();
+}
 
 // Lightbox functionality
 function openLightbox(imageSrc, title, description) {
@@ -399,6 +434,32 @@ async function deleteImage(id) {
   }
 }
 
+// Toggle carousel status for gallery image (Admin only)
+async function toggleCarousel(id, inCarousel) {
+  try {
+    const response = await fetch(`/api/gallery/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ inCarousel })
+    });
+    
+    if (response.ok) {
+      const message = inCarousel ? 'Added to carousel' : 'Removed from carousel';
+      showToast(message, 'success');
+    } else {
+      showToast('Error updating carousel status', 'error');
+      // Revert checkbox
+      const checkbox = document.querySelector(`input[onchange*="toggleCarousel(${id}"]`);
+      if (checkbox) checkbox.checked = !inCarousel;
+    }
+  } catch (error) {
+    showToast('Error: ' + error.message, 'error');
+    // Revert checkbox
+    const checkbox = document.querySelector(`input[onchange*="toggleCarousel(${id}"]`);
+    if (checkbox) checkbox.checked = !inCarousel;
+  }
+}
+
 // Edit gallery image (Admin only)
 function editImage(id) {
   const galleryItem = document.querySelector(`[data-image-id="${id}"]`);
@@ -663,10 +724,13 @@ if (settingsForm) {
   settingsForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
+    const carouselTimer = parseInt(document.getElementById('carouselTimer').value);
+    
     const formData = {
       backgroundColor: document.getElementById('backgroundColor').value,
       postBackground: document.getElementById('postBackground').value,
-      textColor: document.getElementById('textColor').value
+      textColor: document.getElementById('textColor').value,
+      carouselTimer: carouselTimer >= 3 ? carouselTimer : 5
     };
 
     try {
