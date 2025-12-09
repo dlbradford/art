@@ -3,7 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= typeof title !== 'undefined' ? title + ' - ' : '' %>Art by Donna McAdams</title>
+  
+  <!-- SEO Meta Tags -->
+  <title><%= typeof title !== 'undefined' ? title + ' - ' : '' %>Art by Donna McAdams - Contemporary Mixed Media Artist</title>
+  <meta name="description" content="<%= typeof description !== 'undefined' ? description : 'Explore the contemporary mixed media artwork of Donna McAdams. View gallery, read artist blog, and commission original paintings in Connecticut.' %>">
+  <meta name="keywords" content="Donna McAdams, contemporary art, mixed media, abstract art, Connecticut artist, original paintings, art commissions, visual artist, acrylic paintings, art gallery">
+  <meta name="author" content="Donna McAdams">
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://artbydonnamcadams.com<%= typeof canonicalPath !== 'undefined' ? canonicalPath : '/' %>">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://artbydonnamcadams.com<%= typeof canonicalPath !== 'undefined' ? canonicalPath : '/' %>">
+  <meta property="og:title" content="<%= typeof title !== 'undefined' ? title + ' - ' : '' %>Art by Donna McAdams">
+  <meta property="og:description" content="<%= typeof description !== 'undefined' ? description : 'Contemporary mixed media artwork by Donna McAdams' %>">
+  <meta property="og:image" content="<%= typeof ogImage !== 'undefined' ? ogImage : 'https://artbydonnamcadams.com/uploads/default-og-image.jpg' %>">
+  <meta property="og:site_name" content="Art by Donna McAdams">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= typeof title !== 'undefined' ? title + ' - ' : '' %>Art by Donna McAdams">
+  <meta name="twitter:description" content="<%= typeof description !== 'undefined' ? description : 'Contemporary mixed media artwork by Donna McAdams' %>">
+  <meta name="twitter:image" content="<%= typeof ogImage !== 'undefined' ? ogImage : 'https://artbydonnamcadams.com/uploads/default-og-image.jpg' %>">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/favicon.png">
+  
+  <!-- Structured Data - Organization Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VisualArtwork",
+    "name": "Art by Donna McAdams",
+    "description": "Contemporary mixed media artwork by Connecticut-based artist Donna McAdams",
+    "url": "https://artbydonnamcadams.com",
+    "creator": {
+      "@type": "Person",
+      "name": "Donna McAdams",
+      "jobTitle": "Visual Artist",
+      "description": "Contemporary mixed media artist specializing in abstract expressionism",
+      "sameAs": []
+    }
+  }
+  </script>
+  
   <link rel="stylesheet" href="/style.css">
 </head>
 <body 
@@ -25,30 +71,31 @@
 
   <div class="container">
     <header style="background: <%= settings.headerBackground %>;">
-      <h1 class="site-title" style="color: <%= settings.textColor %>;">Art by Donna</h1>
+      <h1 class="site-title" style="color: <%= settings.textColor %>;">Art by Donna McAdams</h1>
+      <p style="text-align: center; margin-top: -10px; font-size: 14px; color: <%= settings.textColor %>; opacity: 0.8;">Contemporary Mixed Media Artist</p>
     </header>
 
     <div class="main-content">
-      <aside class="sidebar" style="background: <%= settings.headerBackground %>;">
+      <aside class="sidebar" style="background: <%= settings.headerBackground %>;" role="navigation" aria-label="Main navigation">
         <nav>
           <ul>
-            <li><a href="/blogroll" class="<%= typeof page !== 'undefined' && page === 'blogroll' ? 'active' : '' %>" style="color: <%= settings.textColor %>;">BlogRoll</a></li>
-            <li><a href="/gallery" class="<%= typeof page !== 'undefined' && page === 'gallery' ? 'active' : '' %>" style="color: <%= settings.textColor %>;">Gallery</a></li>
-            <li><a href="/requests" class="<%= typeof page !== 'undefined' && page === 'requests' ? 'active' : '' %>" style="color: <%= settings.textColor %>;">Requests</a></li>
-            <li><a href="/links" class="<%= typeof page !== 'undefined' && page === 'links' ? 'active' : '' %>" style="color: <%= settings.textColor %>;">Links</a></li>
-            <li><a href="/contact" class="<%= typeof page !== 'undefined' && page === 'contact' ? 'active' : '' %>" style="color: <%= settings.textColor %>;">Contact me</a></li>
-            <li><a href="/about" class="<%= typeof page !== 'undefined' && page === 'about' ? 'active' : '' %>" style="color: <%= settings.textColor %>;">About</a></li>
+            <li><a href="/blogroll" class="<%= typeof page !== 'undefined' && page === 'blogroll' ? 'active' : '' %>" style="color: <%= settings.textColor %>;" aria-label="View blog posts">BlogRoll</a></li>
+            <li><a href="/gallery" class="<%= typeof page !== 'undefined' && page === 'gallery' ? 'active' : '' %>" style="color: <%= settings.textColor %>;" aria-label="View artwork gallery">Gallery</a></li>
+            <li><a href="/requests" class="<%= typeof page !== 'undefined' && page === 'requests' ? 'active' : '' %>" style="color: <%= settings.textColor %>;" aria-label="Request commission">Requests</a></li>
+            <li><a href="/links" class="<%= typeof page !== 'undefined' && page === 'links' ? 'active' : '' %>" style="color: <%= settings.textColor %>;" aria-label="Useful links">Links</a></li>
+            <li><a href="/contact" class="<%= typeof page !== 'undefined' && page === 'contact' ? 'active' : '' %>" style="color: <%= settings.textColor %>;" aria-label="Contact artist">Contact me</a></li>
+            <li><a href="/about" class="<%= typeof page !== 'undefined' && page === 'about' ? 'active' : '' %>" style="color: <%= settings.textColor %>;" aria-label="About the artist">About</a></li>
           </ul>
         </nav>
       </aside>
 
-      <main class="content-area" style="background: <%= settings.backgroundColor %>; color: <%= settings.textColor %>;">
+      <main class="content-area" style="background: <%= settings.backgroundColor %>; color: <%= settings.textColor %>;" role="main">
         <%- body %>
       </main>
     </div>
 
-    <footer style="background: <%= settings.headerBackground %>; color: <%= settings.textColor %>;">
-      <p>Copyright 2025 by Donna McAdams</p>
+    <footer style="background: <%= settings.headerBackground %>; color: <%= settings.textColor %>;" role="contentinfo">
+      <p>&copy; 2025 Donna McAdams. All rights reserved.</p>
     </footer>
   </div>
 

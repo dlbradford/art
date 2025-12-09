@@ -162,36 +162,157 @@ function requireAdmin(req, res, next) {
 app.get('/', (req, res) => {
   const posts = readJSON(POSTS_FILE);
   const recentPosts = posts.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
-  res.render('index', { posts: recentPosts });
+  
+  res.render('index', { 
+    posts: recentPosts,
+    title: 'Home',
+    description: 'Contemporary mixed media artwork by Donna McAdams. Explore original paintings, abstract art, and commission custom pieces.',
+    canonicalPath: '/',
+    ogImage: 'https://artbydonnamcadams.com/uploads/hero-image.jpg'
+  });
 });
 
 app.get('/blogroll', (req, res) => {
   const posts = readJSON(POSTS_FILE);
   const sortedPosts = posts.sort((a, b) => new Date(b.date) - new Date(a.date));
-  res.render('blogroll', { posts: sortedPosts });
+  res.render('blogroll', { 
+    posts: sortedPosts,
+    title: 'Blog',
+    description: 'Read about Donna McAdams\' artistic process, inspiration, and latest works. Insights into contemporary mixed media art.',
+    canonicalPath: '/blogroll'
+  });
 });
 
 app.get('/gallery', (req, res) => {
   const images = readJSON(GALLERY_FILE);
   const sortedImages = images.sort((a, b) => new Date(b.uploaded_at) - new Date(a.uploaded_at));
-  res.render('gallery', { images: sortedImages });
+  res.render('gallery', { 
+    images: sortedImages,
+    title: 'Gallery',
+    description: 'View Donna McAdams\' portfolio of contemporary mixed media artwork. Browse original paintings and abstract pieces.',
+    canonicalPath: '/gallery'
+  });
 });
 
 app.get('/requests', (req, res) => {
-  res.render('requests');
+  res.render('requests', {
+    title: 'Commission Request',
+    description: 'Request a custom artwork commission from Donna McAdams. Get a personalized original painting for your space.',
+    canonicalPath: '/requests'
+  });
 });
 
 app.get('/links', (req, res) => {
   const links = readJSON(LINKS_FILE);
-  res.render('links', { links });
+  res.render('links', { 
+    links,
+    title: 'Links',
+    description: 'Useful resources and links related to contemporary art, galleries, and artistic inspiration.',
+    canonicalPath: '/links'
+  });
 });
 
 app.get('/contact', (req, res) => {
-  res.render('contact');
+  res.render('contact', {
+    title: 'Contact',
+    description: 'Get in touch with Donna McAdams. Contact for commissions, exhibitions, or general inquiries about artwork.',
+    canonicalPath: '/contact'
+  });
 });
 
 app.get('/about', (req, res) => {
-  res.render('about');
+  res.render('about', {
+    title: 'About',
+    description: 'Learn about Donna McAdams - Connecticut-based contemporary artist. Discover her artistic journey, philosophy, and background.',
+    canonicalPath: '/about'
+  });
+});
+
+// Sitemap.xml
+app.get('/sitemap.xml', (req, res) => {
+  const posts = readJSON(POSTS_FILE);
+  const images = readJSON(GALLERY_FILE);
+  
+  const baseUrl = 'https://artbydonnamcadams.com';
+  const today = new Date().toISOString().split('T')[0];
+  
+  let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Main Pages -->
+  <url>
+    <loc>${baseUrl}/</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/about</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/gallery</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/blogroll</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/contact</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/requests</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/links</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+`;
+
+  // Add blog posts
+  posts.forEach(post => {
+    const postDate = post.updated_at || post.created_at || today;
+    sitemap += `  <url>
+    <loc>${baseUrl}/blogroll#post-${post.id}</loc>
+    <lastmod>${postDate.split('T')[0]}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+`;
+  });
+
+  sitemap += '</urlset>';
+  
+  res.header('Content-Type', 'application/xml');
+  res.send(sitemap);
+});
+
+// robots.txt
+app.get('/robots.txt', (req, res) => {
+  const robotsTxt = `User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://artbydonnamcadams.com/sitemap.xml
+`;
+  
+  res.header('Content-Type', 'text/plain');
+  res.send(robotsTxt);
 });
 
 // Admin Routes - Login/Logout
