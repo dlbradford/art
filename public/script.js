@@ -805,6 +805,45 @@ if (settingsForm) {
   });
 }
 
+// About page edit form (Admin only)
+const aboutForm = document.getElementById('aboutForm');
+if (aboutForm) {
+  aboutForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = {
+      heading: document.getElementById('heading').value,
+      introTitle: document.getElementById('introTitle').value,
+      introContent: document.getElementById('introContent').value,
+      journeyTitle: document.getElementById('journeyTitle').value,
+      journeyItems: document.getElementById('journeyItems').value,
+      approachTitle: document.getElementById('approachTitle').value,
+      approachContent: document.getElementById('approachContent').value,
+      statementTitle: document.getElementById('statementTitle').value,
+      statementContent: document.getElementById('statementContent').value,
+      studioTitle: document.getElementById('studioTitle').value,
+      studioContent: document.getElementById('studioContent').value
+    };
+
+    try {
+      const response = await fetch('/api/about', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        showToast('About page updated successfully!', 'success');
+        setTimeout(() => window.location.href = '/about', 1500);
+      } else {
+        showToast('Error saving About page', 'error');
+      }
+    } catch (error) {
+      showToast('Error: ' + error.message, 'error');
+    }
+  });
+}
+
 // Request search and filter (Admin only)
 function filterRequests() {
   const searchTerm = document.getElementById('searchRequests')?.value.toLowerCase() || '';

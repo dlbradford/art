@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit About Page</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body style="background: <%= settings.backgroundColor %>; color: <%= settings.textColor %>;">
+  <div class="admin-bar">
+    <span>✏️ Edit About Page</span>
+    <div>
+      <a href="/admin/dashboard">Dashboard</a>
+      <a href="/about">View About</a>
+      <a href="/admin/logout">Logout</a>
+    </div>
+  </div>
+  <div class="container" style="padding: 40px;">
+    <h1 style="margin-bottom: 30px;">Edit About Page Content</h1>
+    
+    <form id="aboutForm">
+      <div class="form-group">
+        <label>Page Heading</label>
+        <input type="text" id="heading" value="<%= about.heading %>" required>
+      </div>
+      
+      <h3 style="margin: 30px 0 20px; padding-top: 30px; border-top: 2px solid var(--border-color);">Introduction Section</h3>
+      
+      <div class="form-group">
+        <label>Introduction Title</label>
+        <input type="text" id="introTitle" value="<%= about.introduction.title %>" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Introduction Content</label>
+        <p style="font-size: 13px; color: var(--secondary-text); margin-bottom: 8px;">
+          Use two line breaks to separate paragraphs
+        </p>
+        <textarea id="introContent" rows="6" required><%= about.introduction.content %></textarea>
+      </div>
+      
+      <h3 style="margin: 30px 0 20px; padding-top: 30px; border-top: 2px solid var(--border-color);">Artistic Journey Section</h3>
+      
+      <div class="form-group">
+        <label>Journey Title</label>
+        <input type="text" id="journeyTitle" value="<%= about.journey.title %>" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Journey Timeline Items (one per line)</label>
+        <textarea id="journeyItems" rows="8" required><%= about.journey.items.join('\n') %></textarea>
+      </div>
+      
+      <h3 style="margin: 30px 0 20px; padding-top: 30px; border-top: 2px solid var(--border-color);">Approach Section</h3>
+      
+      <div class="form-group">
+        <label>Approach Title</label>
+        <input type="text" id="approachTitle" value="<%= about.approach.title %>" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Approach Content</label>
+        <textarea id="approachContent" rows="6" required><%= about.approach.content %></textarea>
+      </div>
+      
+      <h3 style="margin: 30px 0 20px; padding-top: 30px; border-top: 2px solid var(--border-color);">Artist Statement Section</h3>
+      
+      <div class="form-group">
+        <label>Statement Title</label>
+        <input type="text" id="statementTitle" value="<%= about.statement.title %>" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Statement Content</label>
+        <textarea id="statementContent" rows="6" required><%= about.statement.content %></textarea>
+      </div>
+      
+      <h3 style="margin: 30px 0 20px; padding-top: 30px; border-top: 2px solid var(--border-color);">Studio & Practice Section</h3>
+      
+      <div class="form-group">
+        <label>Studio Title</label>
+        <input type="text" id="studioTitle" value="<%= about.studio.title %>" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Studio Content</label>
+        <textarea id="studioContent" rows="6" required><%= about.studio.content %></textarea>
+      </div>
+      
+      <div style="margin-top: 40px; display: flex; gap: 15px;">
+        <button type="submit">Save Changes</button>
+        <a href="/about" class="btn" style="background: var(--secondary-text); text-decoration: none;">Cancel</a>
+      </div>
+    </form>
+  </div>
+  <script src="/script.js"></script>
+</body>
+</html>

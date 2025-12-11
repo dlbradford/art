@@ -2,60 +2,53 @@
   title: 'About',
   page: 'about',
   body: `
-    <h2 style="font-size: 28px; margin-bottom: 30px; font-weight: 600;">About Me</h2>
-    
-    <div style="line-height: 1.7;">
-      <div style="margin-bottom: 40px;">
-        <h3 style="font-size: 20px; margin-bottom: 20px; font-weight: 600;">Hello, I'm Donna McAdams</h3>
-        <p style="margin-bottom: 20px;">
-          I'm a visual artist based in Florida, specializing in mixed media artwork that explores the intersection of color, form, and emotional expression. My work is influenced by natural landscapes, abstract expressionism, and the quiet moments of everyday life.
-        </p>
-        <p style="margin-bottom: 20px;">
-          For over fifteen years, I've been creating art that invites viewers to pause, reflect, and find their own meaning within each piece. My process is intuitive and exploratory, often beginning with a simple emotion or memory and evolving through layers of paint, texture, and deliberate mark-making.
-        </p>
-      </div>
+    <div style="background: ${settings.postBackground}; padding: 30px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: var(--shadow);">
+      <h2 style="font-size: 28px; margin-bottom: 30px; font-weight: 600; color: ${settings.textColor};">${about.heading}</h2>
+      
+      <div style="line-height: 1.7; color: ${settings.textColor};">
+        <div style="margin-bottom: 40px;">
+          <h3 style="font-size: 20px; margin-bottom: 20px; font-weight: 600; color: ${settings.textColor};">${about.introduction.title}</h3>
+          ${about.introduction.content.split('\\n\\n').map(para => `
+            <p style="margin-bottom: 20px; color: ${settings.textColor};">${para}</p>
+          `).join('')}
+        </div>
 
-      <div style="margin-bottom: 40px; padding: 25px; background: ${settings.headerBackground}; border: 1px solid var(--border-color); border-radius: 8px;">
-        <h3 style="font-size: 20px; margin-bottom: 20px; font-weight: 600;">Artistic Journey</h3>
-        <ul style="margin-left: 30px;">
-          <li style="margin-bottom: 12px;"><strong>2010:</strong> BFA in Fine Arts from Yale University</li>
-          <li style="margin-bottom: 12px;"><strong>2012:</strong> First solo exhibition at Hartford Gallery</li>
-          <li style="margin-bottom: 12px;"><strong>2015:</strong> Artist residency in Provincetown, MA</li>
-          <li style="margin-bottom: 12px;"><strong>2018:</strong> Featured in "Contemporary New England Artists" collection</li>
-          <li style="margin-bottom: 12px;"><strong>2020:</strong> Established studio practice in Connecticut</li>
-          <li style="margin-bottom: 12px;"><strong>2023:</strong> Work acquired by private collections internationally</li>
-        </ul>
-      </div>
+        <div style="margin-bottom: 40px; padding: 25px; background: ${settings.headerBackground}; border: 1px solid var(--border-color); border-radius: 8px;">
+          <h3 style="font-size: 20px; margin-bottom: 20px; font-weight: 600; color: ${settings.textColor};">${about.journey.title}</h3>
+          <ul style="margin-left: 30px; color: ${settings.textColor};">
+            ${about.journey.items.map(item => `
+              <li style="margin-bottom: 12px;">${item}</li>
+            `).join('')}
+          </ul>
+        </div>
 
-      <div style="margin-bottom: 40px;">
-        <h3 style="font-size: 20px; margin-bottom: 20px; font-weight: 600;">My Approach</h3>
-        <p style="margin-bottom: 20px;">
-          I believe art should evoke something genuine - whether that's joy, contemplation, nostalgia, or simply a moment of visual pleasure. I work primarily with acrylics, oils, and mixed media, often incorporating found materials and unconventional techniques to create depth and texture.
-        </p>
-        <p style="margin-bottom: 20px;">
-          Each piece begins with experimentation. I might start with bold gestural marks, then refine and layer, building complexity while maintaining spontaneity. The process is as important as the result - it's through this exploration that I discover what each piece wants to become.
-        </p>
-      </div>
+        <div style="margin-bottom: 40px;">
+          <h3 style="font-size: 20px; margin-bottom: 20px; font-weight: 600; color: ${settings.textColor};">${about.approach.title}</h3>
+          ${about.approach.content.split('\\n\\n').map(para => `
+            <p style="margin-bottom: 20px; color: ${settings.textColor};">${para}</p>
+          `).join('')}
+        </div>
 
-      <div style="margin-bottom: 40px; padding: 25px; border: 1px solid var(--border-color); border-radius: 8px;">
-        <h3 style="font-size: 20px; margin-bottom: 20px; font-weight: 600;">Artist Statement</h3>
-        <p style="margin-bottom: 15px; font-style: italic;">
-          "My work exists in the space between representation and abstraction, where memory meets imagination. I'm drawn to moments of transition - dawn, dusk, changing seasons - and the emotional resonance these liminal spaces hold."
-        </p>
-        <p style="font-style: italic;">
-          "Through layered textures and unexpected color relationships, I create visual narratives that invite personal interpretation. Each viewer brings their own experiences to the work, and in that exchange, the art becomes complete."
-        </p>
-      </div>
+        <div style="margin-bottom: 40px; padding: 25px; background: ${settings.postBackground}; border: 2px solid ${settings.headerBackground}; border-radius: 8px;">
+          <h3 style="font-size: 20px; margin-bottom: 20px; font-weight: 600; color: ${settings.textColor};">${about.statement.title}</h3>
+          ${about.statement.content.split('\\n\\n').map(para => `
+            <p style="margin-bottom: 15px; font-style: italic; color: ${settings.textColor};">${para}</p>
+          `).join('')}
+        </div>
 
-      <div>
-        <h3 style="font-size: 20px; margin-bottom: 20px; font-weight: 600;">Studio & Practice</h3>
-        <p style="margin-bottom: 20px;">
-          My studio is nestled in the Connecticut countryside, surrounded by the landscapes that inspire much of my work. I maintain a regular studio practice, typically working mornings when the light is softest and most conducive to seeing subtle color shifts.
-        </p>
-        <p style="margin-bottom: 20px;">
-          When I'm not in the studio, you might find me exploring local art museums, hiking, or photographing textures and patterns in nature that later find their way into my artwork.
-        </p>
+        <div>
+          <h3 style="font-size: 20px; margin-bottom: 20px; font-weight: 600; color: ${settings.textColor};">${about.studio.title}</h3>
+          ${about.studio.content.split('\\n\\n').map(para => `
+            <p style="margin-bottom: 20px; color: ${settings.textColor};">${para}</p>
+          `).join('')}
+        </div>
       </div>
+      
+      ${isAdmin ? `
+        <div style="margin-top: 40px; padding-top: 30px; border-top: 2px solid var(--border-color);">
+          <a href="/admin/about/edit" class="btn">Edit About Page</a>
+        </div>
+      ` : ''}
     </div>
   `
 }) %>

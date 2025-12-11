@@ -19,6 +19,7 @@ const GALLERY_FILE = path.join(DATA_DIR, 'gallery.json');
 const LINKS_FILE = path.join(DATA_DIR, 'links.json');
 const REQUESTS_FILE = path.join(DATA_DIR, 'requests.json');
 const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
+const ABOUT_FILE = path.join(DATA_DIR, 'about.json');
 
 // Ensure data directory exists
 if (!fs.existsSync(DATA_DIR)) {
@@ -225,7 +226,9 @@ app.get('/contact', (req, res) => {
 });
 
 app.get('/about', (req, res) => {
+  const aboutData = readJSON(ABOUT_FILE);
   res.render('about', {
+    about: aboutData,
     title: 'About',
     description: 'Learn about Donna McAdams - Connecticut-based contemporary artist. Discover her artistic journey, philosophy, and background.',
     canonicalPath: '/about'
@@ -383,6 +386,12 @@ app.get('/admin/requests', requireAdmin, (req, res) => {
 app.get('/admin/links', requireAdmin, (req, res) => {
   const links = readJSON(LINKS_FILE);
   res.render('admin/links', { links });
+});
+
+// Admin Routes - About Page
+app.get('/admin/about/edit', requireAdmin, (req, res) => {
+  const about = readJSON(ABOUT_FILE);
+  res.render('admin/about-edit', { about });
 });
 
 // Admin Routes - Settings
@@ -644,6 +653,45 @@ app.post('/api/settings', requireAdmin, (req, res) => {
   };
   
   writeJSON(SETTINGS_FILE, settings);
+  res.json({ success: true });
+});
+
+// API Routes - About Page
+app.post('/api/about', requireAdmin, (req, res) => {
+  const {
+    heading,
+    introTitle, introContent,
+    journeyTitle, journeyItems,
+    approachTitle, approachContent,
+    statementTitle, statementContent,
+    studioTitle, studioContent
+  } = req.body;
+  
+  const aboutData = {
+    heading,
+    introduction: {
+      title: introTitle,
+      content: introContent
+    },
+    journey: {
+      title: journeyTitle,
+      items: journeyItems.split('\n').filter(item => item.trim())
+    },
+    approach: {
+      title: approachTitle,
+      content: approachContent
+    },
+    statement: {
+      title: statementTitle,
+      content: statementContent
+    },
+    studio: {
+      title: studioTitle,
+      content: studioContent
+    }
+  };
+  
+  writeJSON(ABOUT_FILE, aboutData);
   res.json({ success: true });
 });
 
