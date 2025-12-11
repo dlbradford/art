@@ -135,73 +135,29 @@ header {
 
 /* Carousel/Hero Section */
 .carousel {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: transparent;
   margin-bottom: 40px;
-  border-radius: 8px;
-  height: 250px;
+  padding: 20px 0;
   position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow-lg);
-}
-
-.carousel-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.carousel-arrows {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 28px;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border: none;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s;
-  z-index: 10;
-  color: white;
-}
-
-.carousel-arrows:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-50%) scale(1.1);
-}
-
-.carousel-arrows.left {
-  left: 20px;
-}
-
-.carousel-arrows.right {
-  right: 20px;
-}
-
-.carousel-content {
-  text-align: center;
-  padding: 40px;
 }
 
 .carousel-slides {
   width: 100%;
+  position: relative;
 }
 
 .carousel-slide {
   width: 100%;
   animation: fadeIn 0.5s;
+  text-align: center;
+}
+
+.carousel-image {
+  max-width: 100%;
+  width: auto;
+  display: block;
+  margin: 0 auto;
+  object-fit: contain;
 }
 
 @keyframes fadeIn {
@@ -209,31 +165,75 @@ header {
   to { opacity: 1; }
 }
 
-.carousel-dots {
+.carousel-content {
   text-align: center;
-  padding: 10px 0;
+  padding: 40px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px;
+  color: white;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.carousel-pause-btn {
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 16px;
+  color: white;
+  padding: 0;
+}
+
+.carousel-pause-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.1);
+}
+
+.carousel-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .carousel-dot {
-  display: inline-block;
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.4);
-  margin: 0 6px;
+  background: rgba(0, 0, 0, 0.3);
   cursor: pointer;
   transition: all 0.3s;
+  border: 2px solid transparent;
+  display: inline-block;
 }
 
 .carousel-dot:hover {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(0, 0, 0, 0.5);
   transform: scale(1.2);
 }
 
 .carousel-dot.active {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.8);
   width: 14px;
   height: 14px;
+  border-color: rgba(0, 0, 0, 0.3);
 }
 
 /* Blog Post Styles */

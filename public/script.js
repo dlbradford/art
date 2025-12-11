@@ -1,5 +1,7 @@
 // Carousel functionality for gallery images
 let currentSlide = 0;
+let carouselInterval = null;
+let carouselPaused = false;
 
 function updateCarousel() {
   const slides = document.querySelectorAll('.carousel-slide');
@@ -49,6 +51,26 @@ function goToSlide(index) {
   updateCarousel();
 }
 
+function toggleCarouselPause() {
+  carouselPaused = !carouselPaused;
+  
+  const pauseIcon = document.querySelector('.pause-icon');
+  const playIcon = document.querySelector('.play-icon');
+  
+  if (carouselPaused) {
+    pauseIcon.style.display = 'none';
+    playIcon.style.display = 'inline';
+    if (carouselInterval) {
+      clearInterval(carouselInterval);
+      carouselInterval = null;
+    }
+  } else {
+    pauseIcon.style.display = 'inline';
+    playIcon.style.display = 'none';
+    startCarouselTimer();
+  }
+}
+
 // Auto-advance carousel based on settings
 function startCarouselTimer() {
   const carousel = document.querySelector('.carousel');
@@ -57,21 +79,50 @@ function startCarouselTimer() {
   const slides = document.querySelectorAll('.carousel-slide');
   if (slides.length <= 1) return;
   
+  // Clear any existing interval
+  if (carouselInterval) {
+    clearInterval(carouselInterval);
+  }
+  
   const timerSeconds = parseInt(carousel.dataset.timer) || 5;
   const timerMs = timerSeconds * 1000;
   
-  setInterval(() => {
-    if (document.querySelectorAll('.carousel-slide').length > 1) {
+  carouselInterval = setInterval(() => {
+    if (!carouselPaused && document.querySelectorAll('.carousel-slide').length > 1) {
       nextSlide();
     }
   }, timerMs);
 }
 
-// Start timer when page loads
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', startCarouselTimer);
-} else {
+// Apply responsive height to carousel images
+function applyCarouselHeight() {
+  const carousel = document.querySelector('.carousel');
+  if (!carousel) return;
+  
+  const heightPercent = parseInt(carousel.dataset.height) || 25;
+  const viewportHeight = window.innerHeight;
+  const maxHeight = Math.floor(viewportHeight * (heightPercent / 100));
+  
+  const carouselImages = document.querySelectorAll('.carousel-image');
+  carouselImages.forEach(img => {
+    img.style.maxHeight = `${maxHeight}px`;
+  });
+}
+
+// Start timer and apply height when page loads
+function initCarousel() {
+  applyCarouselHeight();
   startCarouselTimer();
+}
+
+// Update height on window resize
+window.addEventListener('resize', applyCarouselHeight);
+
+// Initialize carousel
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initCarousel);
+} else {
+  initCarousel();
 }
 
 // Lightbox functionality
@@ -725,12 +776,14 @@ if (settingsForm) {
     e.preventDefault();
     
     const carouselTimer = parseInt(document.getElementById('carouselTimer').value);
+    const carouselHeight = parseInt(document.getElementById('carouselHeightInput').value);
     
     const formData = {
       backgroundColor: document.getElementById('backgroundColor').value,
       postBackground: document.getElementById('postBackground').value,
       textColor: document.getElementById('textColor').value,
-      carouselTimer: carouselTimer >= 3 ? carouselTimer : 5
+      carouselTimer: carouselTimer >= 3 && carouselTimer <= 30 ? carouselTimer : 5,
+      carouselHeight: carouselHeight >= 10 && carouselHeight <= 90 ? carouselHeight : 25
     };
 
     try {

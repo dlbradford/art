@@ -1,1 +1,8 @@
-[]
+[
+  {
+    "id": 1,
+    "title": "Newsy News",
+    "url": "http://cnn.com",
+    "description": "What you think, eh?"
+  }
+]

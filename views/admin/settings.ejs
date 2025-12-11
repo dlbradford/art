@@ -47,6 +47,20 @@
           <input type="number" id="carouselTimer" min="3" max="30" value="<%= settings.carouselTimer || 5 %>" style="width: 150px;">
         </div>
         
+        <div class="form-group">
+          <label>Carousel Image Height (% of screen)</label>
+          <p style="font-size: 13px; color: var(--secondary-text); margin-bottom: 8px;">How tall should carousel images be relative to screen height (10-90%)</p>
+          <div style="display: flex; align-items: center; gap: 15px;">
+            <input type="range" id="carouselHeightSlider" min="10" max="90" value="<%= settings.carouselHeight || 25 %>" 
+                   style="flex: 1; cursor: pointer;" 
+                   oninput="document.getElementById('carouselHeightInput').value = this.value">
+            <input type="number" id="carouselHeightInput" min="10" max="90" value="<%= settings.carouselHeight || 25 %>" 
+                   style="width: 80px; text-align: center;"
+                   oninput="document.getElementById('carouselHeightSlider').value = this.value">
+            <span style="font-weight: 600; min-width: 30px;">%</span>
+          </div>
+        </div>
+        
         <button type="submit">Save Settings</button>
       </form>
       

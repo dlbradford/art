@@ -4,17 +4,16 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Database / Data files (optional - uncomment to ignore)
+# Environment variables
+.env
+.env.local
+
+# Database / Data files (optional - uncomment to exclude from git)
 # data/
-# *.json
 
 # Uploaded files
 public/uploads/*
 !public/uploads/.gitkeep
-
-# Environment variables
-.env
-.env.local
 
 # IDE
 .vscode/

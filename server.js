@@ -633,13 +633,14 @@ app.delete('/api/links/:id', requireAdmin, (req, res) => {
 
 // API Routes - Settings
 app.post('/api/settings', requireAdmin, (req, res) => {
-  const { backgroundColor, postBackground, textColor, carouselTimer } = req.body;
+  const { backgroundColor, postBackground, textColor, carouselTimer, carouselHeight } = req.body;
   
   const settings = {
     backgroundColor,
     postBackground,
     textColor,
-    carouselTimer: carouselTimer || 5
+    carouselTimer: carouselTimer || 5,
+    carouselHeight: carouselHeight || 25
   };
   
   writeJSON(SETTINGS_FILE, settings);
