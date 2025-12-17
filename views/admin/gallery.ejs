@@ -39,7 +39,7 @@
     <div class="gallery-grid">
       <% images.forEach(image => { %>
         <div class="gallery-item" data-image-id="<%= image.id %>">
-          <img src="/uploads/<%= image.filename %>" alt="<%= image.title %>">
+          <img src="<%= image.filename.startsWith('http') ? image.filename : '/uploads/' + image.filename %>" alt="<%= image.title %>">
           <div class="gallery-info">
             <div class="gallery-title" data-field="title"><%= image.title %></div>
             <% if (image.description) { %>

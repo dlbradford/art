@@ -7,7 +7,7 @@
         <div class="carousel-slides">
           ${carouselImages.map((image, index) => `
             <div class="carousel-slide ${index === 0 ? 'active' : ''}" style="display: ${index === 0 ? 'block' : 'none'};">
-              <img src="/uploads/${image.filename}" alt="${image.title}" class="carousel-image">
+              <img src="${image.filename.startsWith('http') ? image.filename : '/uploads/' + image.filename}" alt="${image.title}" class="carousel-image">
               <div style="text-align: center; margin-top: 15px;">
                 <h3 style="font-size: 20px; margin-bottom: 8px; color: ${settings.textColor};">${image.title}</h3>
                 ${image.description ? `<p style="font-size: 14px; color: ${settings.textColor}; opacity: 0.8;">${image.description}</p>` : ''}

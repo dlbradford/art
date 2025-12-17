@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,6 +13,20 @@ const PORT = process.env.PORT || 3000;
 // Load environment variables (or use defaults)
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 const SESSION_SECRET = process.env.SESSION_SECRET || 'your-secret-key-change-in-production';
+
+// Cloudinary configuration
+const USE_CLOUDINARY = process.env.CLOUDINARY_CLOUD_NAME ? true : false;
+
+if (USE_CLOUDINARY) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+  });
+  console.log('✅ Cloudinary configured - images will be stored in cloud');
+} else {
+  console.log('⚠️  Cloudinary not configured - using local storage (images will be lost on restart)');
+}
 
 // Data file paths
 const DATA_DIR = './data';
@@ -136,18 +152,34 @@ app.use((req, res, next) => {
 });
 
 // File upload configuration
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = './public/uploads';
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
+let storage;
+
+if (USE_CLOUDINARY) {
+  // Use Cloudinary storage
+  storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+      folder: 'donna-art-gallery',
+      allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+      transformation: [{ width: 2000, height: 2000, crop: 'limit' }]
     }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
-});
+  });
+} else {
+  // Use local disk storage (for development)
+  storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      const uploadDir = './public/uploads';
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+      cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname));
+    }
+  });
+}
+
 const upload = multer({ storage: storage });
 
 // Auth middleware
@@ -495,32 +527,51 @@ app.patch('/api/posts/:id', requireAdmin, upload.single('image'), (req, res) => 
 // API Routes - Gallery
 app.post('/api/gallery', requireAdmin, upload.single('image'), (req, res) => {
   const { title, description } = req.body;
-  const filename = req.file.filename;
+  
+  // Cloudinary stores full URL in req.file.path, local storage uses filename
+  const imageUrl = USE_CLOUDINARY ? req.file.path : `/uploads/${req.file.filename}`;
+  const filename = USE_CLOUDINARY ? req.file.filename : req.file.filename; // For Cloudinary, this is the public_id
   
   const images = readJSON(GALLERY_FILE);
   
   const newImage = {
     id: images.length > 0 ? Math.max(...images.map(i => i.id)) + 1 : 1,
     title,
-    filename,
+    filename: imageUrl, // Store full URL (Cloudinary) or relative path (local)
     description,
-    uploaded_at: new Date().toISOString()
+    uploaded_at: new Date().toISOString(),
+    cloudinary: USE_CLOUDINARY
   };
   
   images.push(newImage);
   writeJSON(GALLERY_FILE, images);
   
-  res.json({ id: newImage.id, filename, success: true });
+  res.json({ id: newImage.id, filename: imageUrl, success: true });
 });
 
-app.delete('/api/gallery/:id', requireAdmin, (req, res) => {
+app.delete('/api/gallery/:id', requireAdmin, async (req, res) => {
   const images = readJSON(GALLERY_FILE);
   const image = images.find(i => i.id === parseInt(req.params.id));
   
   if (image) {
-    const filePath = path.join('./public/uploads', image.filename);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    if (image.cloudinary && USE_CLOUDINARY) {
+      // Extract public_id from Cloudinary URL
+      // URL format: https://res.cloudinary.com/cloud_name/image/upload/v123456/folder/filename.jpg
+      try {
+        const urlParts = image.filename.split('/');
+        const filenamePart = urlParts[urlParts.length - 1].split('.')[0]; // Get filename without extension
+        const folder = urlParts[urlParts.length - 2];
+        const publicId = `${folder}/${filenamePart}`;
+        await cloudinary.uploader.destroy(publicId);
+      } catch (error) {
+        console.error('Error deleting from Cloudinary:', error);
+      }
+    } else {
+      // Local file deletion
+      const filePath = path.join('./public/uploads', path.basename(image.filename));
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
     }
   }
   

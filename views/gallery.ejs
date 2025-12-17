@@ -6,15 +6,17 @@
     
     <div class="gallery-grid">
       ${images && images.length > 0 ? 
-        images.map(image => `
-          <div class="gallery-item" onclick="openLightbox('/uploads/${image.filename}', '${image.title}', '${image.description || ''}')">
-            <img src="/uploads/${image.filename}" alt="${image.title}">
+        images.map(image => {
+          const imgUrl = image.filename.startsWith('http') ? image.filename : `/uploads/${image.filename}`;
+          return `
+          <div class="gallery-item" onclick="openLightbox('${imgUrl}', '${image.title}', '${image.description || ''}')">
+            <img src="${imgUrl}" alt="${image.title}">
             <div class="gallery-info">
               <div class="gallery-title" style="color: ${settings.textColor};">${image.title}</div>
               ${image.description ? `<div class="gallery-description">${image.description}</div>` : ''}
             </div>
           </div>
-        `).join('') :
+        `}).join('') :
         '<p style="grid-column: 1/-1; text-align: center; padding: 40px;">No images yet. Check back soon!</p>'
       }
     </div>
