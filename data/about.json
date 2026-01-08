@@ -2,18 +2,12 @@
   "heading": "About Me",
   "introduction": {
     "title": "Hello, I'm Donna McAdams",
-    "content": "I'm a visual artist based in Connecticut, specializing in mixed media artwork that explores the intersection of color, form, and emotional expression. My work is influenced by natural landscapes, abstract expressionism, and the quiet moments of everyday life.\n\nFor over fifteen years, I've been creating art that invites viewers to pause, reflect, and find their own meaning within each piece. My process is intuitive and exploratory, often beginning with a simple emotion or memory and evolving through layers of paint, texture, and deliberate mark-making."
+    "content": "
   },
   "journey": {
-    "title": "Artistic Journey",
+    "title": "",
     "items": [
-      "2010: BFA in Fine Arts from Yale University",
-      "2012: First solo exhibition at Hartford Gallery",
-      "2015: Artist residency in Provincetown, MA",
-      "2018: Featured in \"Contemporary New England Artists\" collection",
-      "2020: Established studio practice in Connecticut",
-      "2023: Work acquired by private collections internationally"
-    ]
+          ]
   },
   "approach": {
     "title": "My Approach",
