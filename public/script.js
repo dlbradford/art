@@ -811,19 +811,9 @@ if (aboutForm) {
   aboutForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    // Get content from TinyMCE editors
+    // Get full page content from TinyMCE
     const formData = {
-      heading: document.getElementById('heading').value,
-      introTitle: document.getElementById('introTitle').value,
-      introContent: tinymce.get('introContent').getContent(),
-      journeyTitle: document.getElementById('journeyTitle').value,
-      journeyItems: document.getElementById('journeyItems').value,
-      approachTitle: document.getElementById('approachTitle').value,
-      approachContent: tinymce.get('approachContent').getContent(),
-      statementTitle: document.getElementById('statementTitle').value,
-      statementContent: tinymce.get('statementContent').getContent(),
-      studioTitle: document.getElementById('studioTitle').value,
-      studioContent: tinymce.get('studioContent').getContent()
+      fullContent: tinymce.get('pageContent').getContent()
     };
 
     try {

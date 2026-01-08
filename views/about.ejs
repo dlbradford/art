@@ -2,39 +2,8 @@
   title: 'About',
   page: 'about',
   body: `
-    <div style="background: ${settings.postBackground}; padding: 30px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: var(--shadow);">
-      <h2 style="font-size: 28px; margin-bottom: 30px; font-weight: 600; color: ${settings.textColor};">${about.heading}</h2>
-      
-      <div style="line-height: 1.7; color: ${settings.textColor};">
-        <div style="margin-bottom: 40px;">
-          <h3 style="font-size: 20px; margin-bottom: 20px; font-weight: 600; color: ${settings.textColor};">${about.introduction.title}</h3>
-          <div style="color: ${settings.textColor};">${about.introduction.content}</div>
-        </div>
-
-        <div style="margin-bottom: 40px; padding: 25px; background: ${settings.headerBackground}; border: 1px solid var(--border-color); border-radius: 8px;">
-          <h3 style="font-size: 20px; margin-bottom: 20px; font-weight: 600; color: ${settings.textColor};">${about.journey.title}</h3>
-          <ul style="margin-left: 30px; color: ${settings.textColor};">
-            ${about.journey.items.map(item => `
-              <li style="margin-bottom: 12px;">${item}</li>
-            `).join('')}
-          </ul>
-        </div>
-
-        <div style="margin-bottom: 40px;">
-          <h3 style="font-size: 20px; margin-bottom: 20px; font-weight: 600; color: ${settings.textColor};">${about.approach.title}</h3>
-          <div style="color: ${settings.textColor};">${about.approach.content}</div>
-        </div>
-
-        <div style="margin-bottom: 40px; padding: 25px; background: ${settings.postBackground}; border: 2px solid ${settings.headerBackground}; border-radius: 8px;">
-          <h3 style="font-size: 20px; margin-bottom: 20px; font-weight: 600; color: ${settings.textColor};">${about.statement.title}</h3>
-          <div style="font-style: italic; color: ${settings.textColor};">${about.statement.content}</div>
-        </div>
-
-        <div>
-          <h3 style="font-size: 20px; margin-bottom: 20px; font-weight: 600; color: ${settings.textColor};">${about.studio.title}</h3>
-          <div style="color: ${settings.textColor};">${about.studio.content}</div>
-        </div>
-      </div>
+    <div style="background: ${settings.postBackground}; padding: 30px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: var(--shadow); color: ${settings.textColor};">
+      ${about.fullContent}
       
       ${isAdmin ? `
         <div style="margin-top: 40px; padding-top: 30px; border-top: 2px solid var(--border-color);">
