@@ -807,13 +807,13 @@ if (settingsForm) {
 
 // About page edit form (Admin only)
 const aboutForm = document.getElementById('aboutForm');
-if (aboutForm) {
+if (aboutForm && typeof quill !== 'undefined') {
   aboutForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    // Get full page content from TinyMCE
+    // Get full page content from Quill
     const formData = {
-      fullContent: tinymce.get('pageContent').getContent()
+      fullContent: quill.root.innerHTML
     };
 
     try {

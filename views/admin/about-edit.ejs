@@ -3,32 +3,19 @@
 <head>
   <title>Edit About Page</title>
   <link rel="stylesheet" href="/style.css">
-  <!-- TinyMCE -->
-  <script src="https://cdn.tiny.cloud/1/ubrj7rjw9cmpjwh6r5a54a0jhfwtj0buyl4o8oj0g8g1toxp/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-  <script>
-    tinymce.init({
-      selector: '#pageContent',
-      height: 600,
-      menubar: true,
-      plugins: [
-        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-        'searchreplace', 'visualblocks', 'code', 'fullscreen',
-        'insertdatetime', 'media', 'table', 'help', 'wordcount'
-      ],
-      toolbar: 'undo redo | blocks | ' +
-        'bold italic forecolor backcolor | alignleft aligncenter ' +
-        'alignright alignjustify | bullist numlist outdent indent | ' +
-        'removeformat | link image | code | help',
-      content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px; line-height: 1.7; }',
-      block_formats: 'Paragraph=p; Heading 2=h2; Heading 3=h3; Heading 4=h4;',
-      image_advtab: true,
-      setup: function(editor) {
-        editor.on('init', function() {
-          editor.setContent(document.getElementById('pageContentHidden').value);
-        });
-      }
-    });
-  </script>
+  <!-- Quill Editor -->
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+  <style>
+    .ql-editor {
+      min-height: 500px;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .ql-container {
+      font-family: inherit;
+    }
+  </style>
 </head>
 <body style="background: <%= settings.backgroundColor %>; color: <%= settings.textColor %>;">
   <div class="admin-bar">
@@ -42,14 +29,12 @@
   <div class="container" style="padding: 40px;">
     <h1 style="margin-bottom: 20px;">Edit About Page</h1>
     <p style="margin-bottom: 30px; color: var(--secondary-text);">
-      Edit the entire About page content below. Use headings (H2 for main sections, H3 for subsections), 
-      format text, add lists, and style as needed. Everything you see here will appear on the About page.
+      Edit the entire About page content below. Use the toolbar to format text, add headings, lists, and links.
     </p>
     
     <form id="aboutForm">
-      <input type="hidden" id="pageContentHidden" value="<%= about.fullContent %>">
       <div class="form-group">
-        <textarea id="pageContent"></textarea>
+        <div id="editor"><%= about.fullContent %></div>
       </div>
       
       <div style="margin-top: 30px; display: flex; gap: 15px;">
@@ -58,6 +43,23 @@
       </div>
     </form>
   </div>
+  
+  <script>
+    // Initialize Quill editor
+    var quill = new Quill('#editor', {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          [{ 'header': [2, 3, false] }],
+          ['bold', 'italic', 'underline'],
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+          [{ 'align': [] }],
+          ['link'],
+          ['clean']
+        ]
+      }
+    });
+  </script>
   <script src="/script.js"></script>
 </body>
 </html>
