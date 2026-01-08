@@ -3,6 +3,25 @@
 <head>
   <title>Edit About Page</title>
   <link rel="stylesheet" href="/style.css">
+  <!-- TinyMCE -->
+  <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+  <script>
+    tinymce.init({
+      selector: '.tinymce-editor',
+      height: 300,
+      menubar: false,
+      plugins: [
+        'advlist', 'autolink', 'lists', 'link', 'charmap', 'preview',
+        'searchreplace', 'visualblocks', 'code', 'fullscreen',
+        'insertdatetime', 'table', 'help', 'wordcount'
+      ],
+      toolbar: 'undo redo | blocks | ' +
+        'bold italic forecolor | alignleft aligncenter ' +
+        'alignright alignjustify | bullist numlist outdent indent | ' +
+        'removeformat | help',
+      content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+    });
+  </script>
 </head>
 <body style="background: <%= settings.backgroundColor %>; color: <%= settings.textColor %>;">
   <div class="admin-bar">
@@ -15,6 +34,9 @@
   </div>
   <div class="container" style="padding: 40px;">
     <h1 style="margin-bottom: 30px;">Edit About Page Content</h1>
+    <p style="margin-bottom: 20px; color: var(--secondary-text);">
+      Use the rich text editor below to format your content. Separate paragraphs with line breaks.
+    </p>
     
     <form id="aboutForm">
       <div class="form-group">
@@ -31,10 +53,7 @@
       
       <div class="form-group">
         <label>Introduction Content</label>
-        <p style="font-size: 13px; color: var(--secondary-text); margin-bottom: 8px;">
-          Use two line breaks to separate paragraphs
-        </p>
-        <textarea id="introContent" rows="6" required><%= about.introduction.content %></textarea>
+        <textarea id="introContent" class="tinymce-editor" required><%= about.introduction.content %></textarea>
       </div>
       
       <h3 style="margin: 30px 0 20px; padding-top: 30px; border-top: 2px solid var(--border-color);">Artistic Journey Section</h3>
@@ -58,7 +77,7 @@
       
       <div class="form-group">
         <label>Approach Content</label>
-        <textarea id="approachContent" rows="6" required><%= about.approach.content %></textarea>
+        <textarea id="approachContent" class="tinymce-editor" required><%= about.approach.content %></textarea>
       </div>
       
       <h3 style="margin: 30px 0 20px; padding-top: 30px; border-top: 2px solid var(--border-color);">Artist Statement Section</h3>
@@ -70,7 +89,7 @@
       
       <div class="form-group">
         <label>Statement Content</label>
-        <textarea id="statementContent" rows="6" required><%= about.statement.content %></textarea>
+        <textarea id="statementContent" class="tinymce-editor" required><%= about.statement.content %></textarea>
       </div>
       
       <h3 style="margin: 30px 0 20px; padding-top: 30px; border-top: 2px solid var(--border-color);">Studio & Practice Section</h3>
@@ -82,7 +101,7 @@
       
       <div class="form-group">
         <label>Studio Content</label>
-        <textarea id="studioContent" rows="6" required><%= about.studio.content %></textarea>
+        <textarea id="studioContent" class="tinymce-editor" required><%= about.studio.content %></textarea>
       </div>
       
       <div style="margin-top: 40px; display: flex; gap: 15px;">

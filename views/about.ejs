@@ -8,9 +8,7 @@
       <div style="line-height: 1.7; color: ${settings.textColor};">
         <div style="margin-bottom: 40px;">
           <h3 style="font-size: 20px; margin-bottom: 20px; font-weight: 600; color: ${settings.textColor};">${about.introduction.title}</h3>
-          ${about.introduction.content.split('\\n\\n').map(para => `
-            <p style="margin-bottom: 20px; color: ${settings.textColor};">${para}</p>
-          `).join('')}
+          <div style="color: ${settings.textColor};">${about.introduction.content}</div>
         </div>
 
         <div style="margin-bottom: 40px; padding: 25px; background: ${settings.headerBackground}; border: 1px solid var(--border-color); border-radius: 8px;">
@@ -24,23 +22,17 @@
 
         <div style="margin-bottom: 40px;">
           <h3 style="font-size: 20px; margin-bottom: 20px; font-weight: 600; color: ${settings.textColor};">${about.approach.title}</h3>
-          ${about.approach.content.split('\\n\\n').map(para => `
-            <p style="margin-bottom: 20px; color: ${settings.textColor};">${para}</p>
-          `).join('')}
+          <div style="color: ${settings.textColor};">${about.approach.content}</div>
         </div>
 
         <div style="margin-bottom: 40px; padding: 25px; background: ${settings.postBackground}; border: 2px solid ${settings.headerBackground}; border-radius: 8px;">
           <h3 style="font-size: 20px; margin-bottom: 20px; font-weight: 600; color: ${settings.textColor};">${about.statement.title}</h3>
-          ${about.statement.content.split('\\n\\n').map(para => `
-            <p style="margin-bottom: 15px; font-style: italic; color: ${settings.textColor};">${para}</p>
-          `).join('')}
+          <div style="font-style: italic; color: ${settings.textColor};">${about.statement.content}</div>
         </div>
 
         <div>
           <h3 style="font-size: 20px; margin-bottom: 20px; font-weight: 600; color: ${settings.textColor};">${about.studio.title}</h3>
-          ${about.studio.content.split('\\n\\n').map(para => `
-            <p style="margin-bottom: 20px; color: ${settings.textColor};">${para}</p>
-          `).join('')}
+          <div style="color: ${settings.textColor};">${about.studio.content}</div>
         </div>
       </div>
       
