@@ -3,19 +3,25 @@
 <head>
   <title>Edit About Page</title>
   <link rel="stylesheet" href="/style.css">
-  <!-- Quill Editor -->
-  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-  <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-  <style>
-    .ql-editor {
-      min-height: 500px;
-      font-size: 14px;
-      line-height: 1.7;
-    }
-    .ql-container {
-      font-family: inherit;
-    }
-  </style>
+  <!-- TinyMCE -->
+  <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+  <script>
+    tinymce.init({
+      selector: '.tinymce-editor',
+      height: 300,
+      menubar: false,
+      plugins: [
+        'advlist', 'autolink', 'lists', 'link', 'charmap', 'preview',
+        'searchreplace', 'visualblocks', 'code', 'fullscreen',
+        'insertdatetime', 'table', 'help', 'wordcount'
+      ],
+      toolbar: 'undo redo | blocks | ' +
+        'bold italic forecolor | alignleft aligncenter ' +
+        'alignright alignjustify | bullist numlist outdent indent | ' +
+        'removeformat | help',
+      content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+    });
+  </script>
 </head>
 <body style="background: <%= settings.backgroundColor %>; color: <%= settings.textColor %>;">
   <div class="admin-bar">
@@ -27,41 +33,83 @@
     </div>
   </div>
   <div class="container" style="padding: 40px;">
-    <h1 style="margin-bottom: 20px;">Edit About Page</h1>
-    <p style="margin-bottom: 30px; color: var(--secondary-text);">
-      Edit the entire About page content below. Use the toolbar to format text, add headings, lists, and links.
+    <h1 style="margin-bottom: 30px;">Edit About Page Content</h1>
+    <p style="margin-bottom: 20px; color: var(--secondary-text);">
+      Use the rich text editor below to format your content. Separate paragraphs with line breaks.
     </p>
     
     <form id="aboutForm">
       <div class="form-group">
-        <div id="editor"><%= about.fullContent %></div>
+        <label>Page Heading</label>
+        <input type="text" id="heading" value="<%= about.heading %>" required>
       </div>
       
-      <div style="margin-top: 30px; display: flex; gap: 15px;">
+      <h3 style="margin: 30px 0 20px; padding-top: 30px; border-top: 2px solid var(--border-color);">Introduction Section</h3>
+      
+      <div class="form-group">
+        <label>Introduction Title</label>
+        <input type="text" id="introTitle" value="<%= about.introduction.title %>" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Introduction Content</label>
+        <textarea id="introContent" class="tinymce-editor" required><%= about.introduction.content %></textarea>
+      </div>
+      
+      <h3 style="margin: 30px 0 20px; padding-top: 30px; border-top: 2px solid var(--border-color);">Artistic Journey Section</h3>
+      
+      <div class="form-group">
+        <label>Journey Title</label>
+        <input type="text" id="journeyTitle" value="<%= about.journey.title %>" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Journey Timeline Items (one per line)</label>
+        <textarea id="journeyItems" rows="8" required><%= about.journey.items.join('\n') %></textarea>
+      </div>
+      
+      <h3 style="margin: 30px 0 20px; padding-top: 30px; border-top: 2px solid var(--border-color);">Approach Section</h3>
+      
+      <div class="form-group">
+        <label>Approach Title</label>
+        <input type="text" id="approachTitle" value="<%= about.approach.title %>" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Approach Content</label>
+        <textarea id="approachContent" class="tinymce-editor" required><%= about.approach.content %></textarea>
+      </div>
+      
+      <h3 style="margin: 30px 0 20px; padding-top: 30px; border-top: 2px solid var(--border-color);">Artist Statement Section</h3>
+      
+      <div class="form-group">
+        <label>Statement Title</label>
+        <input type="text" id="statementTitle" value="<%= about.statement.title %>" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Statement Content</label>
+        <textarea id="statementContent" class="tinymce-editor" required><%= about.statement.content %></textarea>
+      </div>
+      
+      <h3 style="margin: 30px 0 20px; padding-top: 30px; border-top: 2px solid var(--border-color);">Studio & Practice Section</h3>
+      
+      <div class="form-group">
+        <label>Studio Title</label>
+        <input type="text" id="studioTitle" value="<%= about.studio.title %>" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Studio Content</label>
+        <textarea id="studioContent" class="tinymce-editor" required><%= about.studio.content %></textarea>
+      </div>
+      
+      <div style="margin-top: 40px; display: flex; gap: 15px;">
         <button type="submit">Save Changes</button>
         <a href="/about" class="btn" style="background: var(--secondary-text); text-decoration: none;">Cancel</a>
       </div>
     </form>
   </div>
-  
-  <script>
-    // Initialize Quill editor
-    var quill = new Quill('#editor', {
-      theme: 'snow',
-      modules: {
-        toolbar: [
-          [{ 'header': [2, 3, 4, false] }],
-          [{ 'size': ['small', false, 'large', 'huge'] }],
-          ['bold', 'italic', 'underline', 'strike'],
-          [{ 'color': [] }, { 'background': [] }],
-          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-          [{ 'align': [] }],
-          ['link'],
-          ['clean']
-        ]
-      }
-    });
-  </script>
   <script src="/script.js"></script>
 </body>
 </html>

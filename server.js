@@ -36,7 +36,6 @@ const LINKS_FILE = path.join(DATA_DIR, 'links.json');
 const REQUESTS_FILE = path.join(DATA_DIR, 'requests.json');
 const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
 const ABOUT_FILE = path.join(DATA_DIR, 'about.json');
-const CONTACT_FILE = path.join(DATA_DIR, 'contact.json');
 
 // Ensure data directory exists
 if (!fs.existsSync(DATA_DIR)) {
@@ -86,17 +85,36 @@ function initializeData() {
   // Initialize about page
   if (!fs.existsSync(ABOUT_FILE)) {
     const defaultAbout = {
-      "fullContent": "<h2>About Me</h2><h3>Hello, I'm Donna McAdams</h3><p>I'm a visual artist based in Connecticut, specializing in mixed media artwork that explores the intersection of color, form, and emotional expression. My work is influenced by natural landscapes, abstract expressionism, and the quiet moments of everyday life.</p><p>For over fifteen years, I've been creating art that invites viewers to pause, reflect, and find their own meaning within each piece. My process is intuitive and exploratory, often beginning with a simple emotion or memory and evolving through layers of paint, texture, and deliberate mark-making.</p><h3>Artistic Journey</h3><ul><li>2010: BFA in Fine Arts from Yale University</li><li>2012: First solo exhibition at Hartford Gallery</li><li>2015: Artist residency in Provincetown, MA</li><li>2018: Featured in \"Contemporary New England Artists\" collection</li><li>2020: Established studio practice in Connecticut</li><li>2023: Work acquired by private collections internationally</li></ul><h3>My Approach</h3><p>I believe art should evoke something genuine - whether that's joy, contemplation, nostalgia, or simply a moment of visual pleasure. I work primarily with acrylics, oils, and mixed media, often incorporating found materials and unconventional techniques to create depth and texture.</p><p>Each piece begins with experimentation. I might start with bold gestural marks, then refine and layer, building complexity while maintaining spontaneity. The process is as important as the result - it's through this exploration that I discover what each piece wants to become.</p><h3>Artist Statement</h3><p><em>\"My work exists in the space between representation and abstraction, where memory meets imagination. I'm drawn to moments of transition - dawn, dusk, changing seasons - and the emotional resonance these liminal spaces hold.\"</em></p><p><em>\"Through layered textures and unexpected color relationships, I create visual narratives that invite personal interpretation. Each viewer brings their own experiences to the work, and in that exchange, the art becomes complete.\"</em></p><h3>Studio & Practice</h3><p>My studio is nestled in the Connecticut countryside, surrounded by the landscapes that inspire much of my work. I maintain a regular studio practice, typically working mornings when the light is softest and most conducive to seeing subtle color shifts.</p><p>When I'm not in the studio, you might find me exploring local art museums, hiking, or photographing textures and patterns in nature that later find their way into my artwork.</p>"
+      "heading": "About Me",
+      "introduction": {
+        "title": "Hello, I'm Donna McAdams",
+        "content": "<p>I'm a visual artist based in Connecticut, specializing in mixed media artwork that explores the intersection of color, form, and emotional expression. My work is influenced by natural landscapes, abstract expressionism, and the quiet moments of everyday life.</p><p>For over fifteen years, I've been creating art that invites viewers to pause, reflect, and find their own meaning within each piece. My process is intuitive and exploratory, often beginning with a simple emotion or memory and evolving through layers of paint, texture, and deliberate mark-making.</p>"
+      },
+      "journey": {
+        "title": "Artistic Journey",
+        "items": [
+          "2010: BFA in Fine Arts from Yale University",
+          "2012: First solo exhibition at Hartford Gallery",
+          "2015: Artist residency in Provincetown, MA",
+          "2018: Featured in \"Contemporary New England Artists\" collection",
+          "2020: Established studio practice in Connecticut",
+          "2023: Work acquired by private collections internationally"
+        ]
+      },
+      "approach": {
+        "title": "My Approach",
+        "content": "<p>I believe art should evoke something genuine - whether that's joy, contemplation, nostalgia, or simply a moment of visual pleasure. I work primarily with acrylics, oils, and mixed media, often incorporating found materials and unconventional techniques to create depth and texture.</p><p>Each piece begins with experimentation. I might start with bold gestural marks, then refine and layer, building complexity while maintaining spontaneity. The process is as important as the result - it's through this exploration that I discover what each piece wants to become.</p>"
+      },
+      "statement": {
+        "title": "Artist Statement",
+        "content": "<p><em>\"My work exists in the space between representation and abstraction, where memory meets imagination. I'm drawn to moments of transition - dawn, dusk, changing seasons - and the emotional resonance these liminal spaces hold.\"</em></p><p><em>\"Through layered textures and unexpected color relationships, I create visual narratives that invite personal interpretation. Each viewer brings their own experiences to the work, and in that exchange, the art becomes complete.\"</em></p>"
+      },
+      "studio": {
+        "title": "Studio & Practice",
+        "content": "<p>My studio is nestled in the Connecticut countryside, surrounded by the landscapes that inspire much of my work. I maintain a regular studio practice, typically working mornings when the light is softest and most conducive to seeing subtle color shifts.</p><p>When I'm not in the studio, you might find me exploring local art museums, hiking, or photographing textures and patterns in nature that later find their way into my artwork.</p>"
+      }
     };
     fs.writeFileSync(ABOUT_FILE, JSON.stringify(defaultAbout, null, 2));
-  }
-
-  // Initialize contact page
-  if (!fs.existsSync(CONTACT_FILE)) {
-    const defaultContact = {
-      "fullContent": "<h2>Get In Touch</h2><p>I'd love to hear from you! Whether you have questions about my work, want to discuss a potential commission, or just want to say hello, feel free to reach out.</p><h3>Contact Information</h3><p><strong>Email:</strong> donna@donna.com</p><p><strong>Location:</strong> Connecticut, USA</p><p><strong>Response Time:</strong> Usually within 2-3 business days</p>"
-    };
-    fs.writeFileSync(CONTACT_FILE, JSON.stringify(defaultContact, null, 2));
   }
 }
 
@@ -267,9 +285,7 @@ app.get('/links', (req, res) => {
 });
 
 app.get('/contact', (req, res) => {
-  const contactData = readJSON(CONTACT_FILE);
   res.render('contact', {
-    contact: contactData,
     title: 'Contact',
     description: 'Get in touch with Donna McAdams. Contact for commissions, exhibitions, or general inquiries about artwork.',
     canonicalPath: '/contact'
@@ -443,12 +459,6 @@ app.get('/admin/links', requireAdmin, (req, res) => {
 app.get('/admin/about/edit', requireAdmin, (req, res) => {
   const about = readJSON(ABOUT_FILE);
   res.render('admin/about-edit', { about });
-});
-
-// Admin Routes - Contact Page
-app.get('/admin/contact/edit', requireAdmin, (req, res) => {
-  const contact = readJSON(CONTACT_FILE);
-  res.render('admin/contact-edit', { contact });
 });
 
 // Admin Routes - Settings
@@ -734,25 +744,40 @@ app.post('/api/settings', requireAdmin, (req, res) => {
 
 // API Routes - About Page
 app.post('/api/about', requireAdmin, (req, res) => {
-  const { fullContent } = req.body;
+  const {
+    heading,
+    introTitle, introContent,
+    journeyTitle, journeyItems,
+    approachTitle, approachContent,
+    statementTitle, statementContent,
+    studioTitle, studioContent
+  } = req.body;
   
   const aboutData = {
-    fullContent: fullContent
+    heading,
+    introduction: {
+      title: introTitle,
+      content: introContent
+    },
+    journey: {
+      title: journeyTitle,
+      items: journeyItems.split('\n').filter(item => item.trim())
+    },
+    approach: {
+      title: approachTitle,
+      content: approachContent
+    },
+    statement: {
+      title: statementTitle,
+      content: statementContent
+    },
+    studio: {
+      title: studioTitle,
+      content: studioContent
+    }
   };
   
   writeJSON(ABOUT_FILE, aboutData);
-  res.json({ success: true });
-});
-
-// API Routes - Contact Page
-app.post('/api/contact', requireAdmin, (req, res) => {
-  const { fullContent } = req.body;
-  
-  const contactData = {
-    fullContent: fullContent
-  };
-  
-  writeJSON(CONTACT_FILE, contactData);
   res.json({ success: true });
 });
 

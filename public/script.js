@@ -807,13 +807,23 @@ if (settingsForm) {
 
 // About page edit form (Admin only)
 const aboutForm = document.getElementById('aboutForm');
-if (aboutForm && typeof quill !== 'undefined') {
+if (aboutForm) {
   aboutForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    // Get full page content from Quill
+    // Get content from TinyMCE editors
     const formData = {
-      fullContent: quill.root.innerHTML
+      heading: document.getElementById('heading').value,
+      introTitle: document.getElementById('introTitle').value,
+      introContent: tinymce.get('introContent').getContent(),
+      journeyTitle: document.getElementById('journeyTitle').value,
+      journeyItems: document.getElementById('journeyItems').value,
+      approachTitle: document.getElementById('approachTitle').value,
+      approachContent: tinymce.get('approachContent').getContent(),
+      statementTitle: document.getElementById('statementTitle').value,
+      statementContent: tinymce.get('statementContent').getContent(),
+      studioTitle: document.getElementById('studioTitle').value,
+      studioContent: tinymce.get('studioContent').getContent()
     };
 
     try {
@@ -828,37 +838,6 @@ if (aboutForm && typeof quill !== 'undefined') {
         setTimeout(() => window.location.href = '/about', 1500);
       } else {
         showToast('Error saving About page', 'error');
-      }
-    } catch (error) {
-      showToast('Error: ' + error.message, 'error');
-    }
-  });
-}
-
-// Contact page edit form (Admin only)
-const contactFormEdit = document.getElementById('contactForm');
-// Check if we're on the contact edit page (has Quill editor)
-if (contactFormEdit && typeof quill !== 'undefined' && document.querySelector('.admin-bar')?.textContent.includes('Edit Contact Page')) {
-  contactFormEdit.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    // Get full page content from Quill
-    const formData = {
-      fullContent: quill.root.innerHTML
-    };
-
-    try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-
-      if (response.ok) {
-        showToast('Contact page updated successfully!', 'success');
-        setTimeout(() => window.location.href = '/contact', 1500);
-      } else {
-        showToast('Error saving Contact page', 'error');
       }
     } catch (error) {
       showToast('Error: ' + error.message, 'error');
