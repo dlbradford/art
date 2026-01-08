@@ -4,24 +4,7 @@
   <title>Edit About Page</title>
   <link rel="stylesheet" href="/style.css">
   <!-- TinyMCE -->
-  <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-  <script>
-    tinymce.init({
-      selector: '.tinymce-editor',
-      height: 300,
-      menubar: false,
-      plugins: [
-        'advlist', 'autolink', 'lists', 'link', 'charmap', 'preview',
-        'searchreplace', 'visualblocks', 'code', 'fullscreen',
-        'insertdatetime', 'table', 'help', 'wordcount'
-      ],
-      toolbar: 'undo redo | blocks | ' +
-        'bold italic forecolor | alignleft aligncenter ' +
-        'alignright alignjustify | bullist numlist outdent indent | ' +
-        'removeformat | help',
-      content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-    });
-  </script>
+  <script src="https://cdn.tiny.cloud/1/ubrj7rjw9cmpjwh6r5a54a0jhfwtj0buyl4o8oj0g8g1toxp/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 </head>
 <body style="background: <%= settings.backgroundColor %>; color: <%= settings.textColor %>;">
   <div class="admin-bar">
@@ -33,83 +16,42 @@
     </div>
   </div>
   <div class="container" style="padding: 40px;">
-    <h1 style="margin-bottom: 30px;">Edit About Page Content</h1>
-    <p style="margin-bottom: 20px; color: var(--secondary-text);">
-      Use the rich text editor below to format your content. Separate paragraphs with line breaks.
+    <h1 style="margin-bottom: 20px;">Edit About Page</h1>
+    <p style="margin-bottom: 30px; color: var(--secondary-text);">
+      Edit the entire About page content. Use the editor to format text - no HTML code will be visible.
     </p>
     
     <form id="aboutForm">
       <div class="form-group">
-        <label>Page Heading</label>
-        <input type="text" id="heading" value="<%= about.heading %>" required>
+        <textarea id="pageContent"><%= about.fullContent %></textarea>
       </div>
       
-      <h3 style="margin: 30px 0 20px; padding-top: 30px; border-top: 2px solid var(--border-color);">Introduction Section</h3>
-      
-      <div class="form-group">
-        <label>Introduction Title</label>
-        <input type="text" id="introTitle" value="<%= about.introduction.title %>" required>
-      </div>
-      
-      <div class="form-group">
-        <label>Introduction Content</label>
-        <textarea id="introContent" class="tinymce-editor" required><%= about.introduction.content %></textarea>
-      </div>
-      
-      <h3 style="margin: 30px 0 20px; padding-top: 30px; border-top: 2px solid var(--border-color);">Artistic Journey Section</h3>
-      
-      <div class="form-group">
-        <label>Journey Title</label>
-        <input type="text" id="journeyTitle" value="<%= about.journey.title %>" required>
-      </div>
-      
-      <div class="form-group">
-        <label>Journey Timeline Items (one per line)</label>
-        <textarea id="journeyItems" rows="8" required><%= about.journey.items.join('\n') %></textarea>
-      </div>
-      
-      <h3 style="margin: 30px 0 20px; padding-top: 30px; border-top: 2px solid var(--border-color);">Approach Section</h3>
-      
-      <div class="form-group">
-        <label>Approach Title</label>
-        <input type="text" id="approachTitle" value="<%= about.approach.title %>" required>
-      </div>
-      
-      <div class="form-group">
-        <label>Approach Content</label>
-        <textarea id="approachContent" class="tinymce-editor" required><%= about.approach.content %></textarea>
-      </div>
-      
-      <h3 style="margin: 30px 0 20px; padding-top: 30px; border-top: 2px solid var(--border-color);">Artist Statement Section</h3>
-      
-      <div class="form-group">
-        <label>Statement Title</label>
-        <input type="text" id="statementTitle" value="<%= about.statement.title %>" required>
-      </div>
-      
-      <div class="form-group">
-        <label>Statement Content</label>
-        <textarea id="statementContent" class="tinymce-editor" required><%= about.statement.content %></textarea>
-      </div>
-      
-      <h3 style="margin: 30px 0 20px; padding-top: 30px; border-top: 2px solid var(--border-color);">Studio & Practice Section</h3>
-      
-      <div class="form-group">
-        <label>Studio Title</label>
-        <input type="text" id="studioTitle" value="<%= about.studio.title %>" required>
-      </div>
-      
-      <div class="form-group">
-        <label>Studio Content</label>
-        <textarea id="studioContent" class="tinymce-editor" required><%= about.studio.content %></textarea>
-      </div>
-      
-      <div style="margin-top: 40px; display: flex; gap: 15px;">
+      <div style="margin-top: 30px; display: flex; gap: 15px;">
         <button type="submit">Save Changes</button>
         <a href="/about" class="btn" style="background: var(--secondary-text); text-decoration: none;">Cancel</a>
       </div>
     </form>
   </div>
+  
+  <script>
+    tinymce.init({
+      selector: '#pageContent',
+      height: 600,
+      menubar: true,
+      plugins: [
+        'advlist', 'autolink', 'lists', 'link', 'charmap', 'preview',
+        'searchreplace', 'visualblocks', 'code', 'fullscreen',
+        'insertdatetime', 'table', 'help', 'wordcount'
+      ],
+      toolbar: 'undo redo | blocks fontsize | ' +
+        'bold italic forecolor backcolor | alignleft aligncenter ' +
+        'alignright alignjustify | bullist numlist outdent indent | ' +
+        'removeformat | link | code | help',
+      content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px; line-height: 1.7; }',
+      block_formats: 'Paragraph=p; Heading 2=h2; Heading 3=h3; Heading 4=h4;',
+      font_size_formats: '8pt 10pt 12pt 14pt 16pt 18pt 24pt 36pt 48pt'
+    });
+  </script>
   <script src="/script.js"></script>
 </body>
 </html>
