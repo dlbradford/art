@@ -835,6 +835,37 @@ if (aboutForm && typeof quill !== 'undefined') {
   });
 }
 
+// Contact page edit form (Admin only)
+const contactFormEdit = document.getElementById('contactForm');
+// Check if we're on the contact edit page (has Quill editor)
+if (contactFormEdit && typeof quill !== 'undefined' && document.querySelector('.admin-bar')?.textContent.includes('Edit Contact Page')) {
+  contactFormEdit.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Get full page content from Quill
+    const formData = {
+      fullContent: quill.root.innerHTML
+    };
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        showToast('Contact page updated successfully!', 'success');
+        setTimeout(() => window.location.href = '/contact', 1500);
+      } else {
+        showToast('Error saving Contact page', 'error');
+      }
+    } catch (error) {
+      showToast('Error: ' + error.message, 'error');
+    }
+  });
+}
+
 // Request search and filter (Admin only)
 function filterRequests() {
   const searchTerm = document.getElementById('searchRequests')?.value.toLowerCase() || '';
