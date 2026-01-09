@@ -836,9 +836,9 @@ if (aboutForm && window.location.pathname.includes('/admin/about/edit')) {
 }
 
 // Contact page edit form (Admin only)
-const contactFormEdit = document.getElementById('contactForm');
-if (contactFormEdit && window.location.pathname.includes('/admin/contact/edit')) {
-  contactFormEdit.addEventListener('submit', async (e) => {
+const contactEditForm = document.getElementById('contactEditForm');
+if (contactEditForm) {
+  contactEditForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     // Get content from TinyMCE

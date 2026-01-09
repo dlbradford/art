@@ -26,5 +26,14 @@
       <a href="/" style="color: var(--accent-color);">← Back to Site</a>
     </div>
   </div>
+  <script>
+    // Submit form on Enter key press in password field
+    document.getElementById('password').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        this.closest('form').submit();
+      }
+    });
+  </script>
 </body>
 </html>
